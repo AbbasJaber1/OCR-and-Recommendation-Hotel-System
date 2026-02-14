@@ -1,0 +1,55 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure Full Viewport Coverage */
+html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #f8f9fa; /* Light gray background */
+}
+
+/* Navbar Fixes */
+.navbar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Center Video */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Center vertically */
+    padding-top: 60px; /* Prevent overlap with navbar */
+}
+
+/* Video and Canvas (Overlay) */
+.position-relative {
+    position: relative;
+    width: 600px;
+    height: 450px;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure canvas overlays video properly */
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}

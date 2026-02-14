@@ -1,0 +1,8 @@
+{
+    "name": "hotel/checkin",
+    "description": "exports excel file of daily report",
+    "type": "project",
+    "require": {
+        "phpoffice/phpspreadsheet": "^3.3"
+    }
+}
