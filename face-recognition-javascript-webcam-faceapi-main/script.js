@@ -1,9 +1,9 @@
 // Ensure Face API Models Load Before Running Face Detection
 document.addEventListener("DOMContentLoaded", async function () {
   await Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri("/FaceRecognationWithAction/V5/models"),
-    faceapi.nets.faceRecognitionNet.loadFromUri("/FaceRecognationWithAction/V5/models"),
-    faceapi.nets.faceLandmark68Net.loadFromUri("/FaceRecognationWithAction/V5/models"),
+    faceapi.nets.ssdMobilenetv1.loadFromUri("/OCR-AND-RECOMMENDATION-HOTEL-SYSTEM/FaceRecognationWithAction/V5/models"),
+    faceapi.nets.faceRecognitionNet.loadFromUri("/OCR-AND-RECOMMENDATION-HOTEL-SYSTEM/FaceRecognationWithAction/V5/models"),
+    faceapi.nets.faceLandmark68Net.loadFromUri("/OCR-AND-RECOMMENDATION-HOTEL-SYSTEM/FaceRecognationWithAction/V5/models"),
   ]);
   console.log("✅ Face API Models Loaded!");
 });
@@ -27,7 +27,7 @@ async function getLabeledFaceDescriptions(){
           try {
             // Encode Arabic folder names properly for URLs
             const encodedLabel = encodeURIComponent(label);
-            const imgPath = `/FaceRecognationWithAction/V5/label/${encodedLabel}/${i}.png`; // ✅ Corrected Path
+            const imgPath = `/OCR-AND-RECOMMENDATION-HOTEL-SYSTEM/FaceRecognationWithAction/V5/label/${encodedLabel}/${i}.png`; // ✅ Corrected Path
             console.log(`Loading image: ${imgPath}`);
 
             const img = await faceapi.fetchImage(imgPath);
