@@ -1,9 +1,12 @@
 <?php
 
-$host = "localhost";
-$user = "root"; // Default for XAMPP
-$password = ""; // Default for XAMPP
-$database = "hotel-check-in/out"; // Change this to your actual database name
+// Load environment variables
+require_once __DIR__ . '/env-loader.php';
+
+$host = env('DB_HOST', 'localhost');
+$user = env('DB_USERNAME', 'root');
+$password = env('DB_PASSWORD', '');
+$database = env('DB_NAME', 'hotel-check-in/out');
 
 $conn = new mysqli($host, $user, $password, $database);
 

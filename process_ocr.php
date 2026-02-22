@@ -2,7 +2,10 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$apiKey = "";  // Replace with your actual API Key //AIzaSyDWUQDQa5r // PcqArTxF // 23fA8T0a // 5hujYXgA // ( 6a9b2c8e-1f0c-4d5b-9e7a-8f3c4d2e1b0f )
+// Load environment variables
+require_once __DIR__ . '/env-loader.php';
+
+$apiKey = env('GOOGLE_VISION_API_KEY', '');  // Load from .env file
 
 header('Content-Type: application/json');
 
