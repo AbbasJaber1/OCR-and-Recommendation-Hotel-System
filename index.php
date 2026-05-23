@@ -28,10 +28,7 @@ require "connect.php";
     }
     .land-nav-logo { display:flex; align-items:center; gap:12px }
     .land-nav-logo-ic {
-      width:40px; height:40px; border-radius:10px;
-      background:linear-gradient(135deg,#E8C84A,#C9A84C);
-      display:flex; align-items:center; justify-content:center; font-size:18px;
-      box-shadow:0 4px 14px rgba(201,168,76,.4);
+      display:flex; align-items:center;
     }
     .land-nav-logo-tx { font-size:.95rem; font-weight:700; color:#fff }
     .land-nav-logo-sub { font-size:.72rem; color:rgba(255,255,255,.45) }
@@ -42,7 +39,7 @@ require "connect.php";
 <!-- Top Bar -->
 <div class="land-nav">
   <div class="land-nav-logo">
-    <div class="land-nav-logo-ic">🏨</div>
+    <div class="land-nav-logo-ic"><img src="assets/logo/Full_logo.png" alt="Logo" style="height:36px;width:auto"></div>
     <div>
       <div class="land-nav-logo-tx">الفندق</div>
       <div class="land-nav-logo-sub">نظام إدارة فندقي متكامل</div>

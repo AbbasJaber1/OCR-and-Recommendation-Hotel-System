@@ -58,6 +58,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       -webkit-backdrop-filter: blur(14px);
       z-index: 9999;
     }
+    #video-container {
+      width: 80vw;
+      aspect-ratio: 3009 / 409;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 2px solid var(--g-400);
+      box-shadow: 0 0 40px rgba(46,125,50,.4);
+    }
+    #video-container video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    #button-container {
+      display: flex;
+      gap: 14px;
+    }
+    #capture {
+      background: var(--g-600);
+      color: #fff;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 10px;
+      font-size: .95rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #close-popup {
+      background: #DC2626;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: .95rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     #captured-image img {
       border-radius: var(--r-lg);
       max-width: 100%;
@@ -204,22 +250,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <!-- Webcam Popup Overlay -->
   <div id="webcam-popup" style="display:none">
-    <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(680px,94vw)">
-      <div style="text-align:center;margin-bottom:14px">
-        <span style="color:rgba(255,255,255,.65);font-size:.9rem"><i class="fas fa-passport" style="color:var(--g-300);margin-left:6px"></i> وجّه الجواز نحو الكاميرا ثم التقط منطقة MRZ</span>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:18px;width:80vw">
+      <div id="video-container">
+        <video id="video" autoplay></video>
       </div>
-      <div id="video-container" style="border-radius:16px;overflow:hidden;border:2px solid var(--g-400);box-shadow:0 0 40px rgba(46,125,50,.45)">
-        <video id="video" autoplay style="width:100%;display:block"></video>
-      </div>
-      <div id="button-container" style="display:flex;justify-content:center;gap:14px;margin-top:18px">
-        <button id="capture" onclick="captureImage()"
-                style="background:var(--g-600);color:#fff;border:none;padding:12px 30px;border-radius:12px;font-size:1rem;font-family:inherit;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px">
-          <i class="fas fa-camera"></i> التقاط
-        </button>
-        <button id="close-popup" onclick="closeWebcam()"
-                style="background:#DC2626;color:#fff;border:none;padding:12px 26px;border-radius:12px;font-size:1rem;font-family:inherit;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px">
-          <i class="fas fa-times"></i> إغلاق
-        </button>
+      <div id="button-container">
+        <button id="capture" onclick="captureImage()"><i class="fas fa-camera"></i> التقاط</button>
+        <button id="close-popup" onclick="closeWebcam()"><i class="fas fa-times"></i> إغلاق</button>
       </div>
     </div>
   </div>

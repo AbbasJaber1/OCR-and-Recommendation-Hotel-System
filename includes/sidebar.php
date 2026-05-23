@@ -2,7 +2,9 @@
 <div class="hs-sidebar-overlay" id="sidebarOverlay"></div>
 <aside class="hs-sidebar" id="sidebar">
   <div class="hs-sidebar-hd">
-    <div class="hs-sidebar-logo">🏨</div>
+    <div class="hs-sidebar-logo" style="background:none;box-shadow:none;padding:2px">
+      <img src="assets/logo/logo.png" alt="Logo" style="width:34px;height:34px;object-fit:contain;filter:brightness(0) invert(1)">
+    </div>
     <div class="hs-sidebar-brand">
       <div class="hs-sidebar-brand-nm">الفندق</div>
       <div class="hs-sidebar-brand-sub">نظام إدارة فندقي</div>

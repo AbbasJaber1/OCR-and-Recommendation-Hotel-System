@@ -112,6 +112,8 @@ body.lang-en .hs-sidebar{right:auto;left:0;box-shadow:4px 0 24px rgba(0,0,0,.18)
 .hs-sidebar-brand-nm{font-size:.9rem;font-weight:700;color:#fff;white-space:nowrap;line-height:1.2}
 .hs-sidebar-brand-sub{font-size:.72rem;color:rgba(255,255,255,.45);white-space:nowrap}
 .hs-sidebar.collapsed .hs-sidebar-brand{opacity:0;width:0}
+.hs-sidebar.collapsed .hs-sidebar-logo{display:none}
+.hs-sidebar.collapsed .hs-sidebar-hd{padding:16px;justify-content:center}
 
 .hs-sidebar-toggle{
   width:28px;height:28px;flex-shrink:0;
