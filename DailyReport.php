@@ -1,168 +1,191 @@
 <?php
-include 'connect.php';  // Include database connection
+include 'connect.php';
 
-// Set default date to today if not set
 $selectedDate = isset($_GET['selected_date']) ? $_GET['selected_date'] : date('Y-m-d');
-
-// Handle search input
 $search = isset($_POST['search']) ? $_POST['search'] : '';
 
-// Fetch records from check_logs and guests table based on selected date and search input
-$sql = "
-    SELECT 
-        cl.log_id, 
-        cl.checkout_time, 
-        cl.return_time, 
-        g.guest_name 
-    FROM 
-        check_logs cl 
-    JOIN 
-        guests g ON cl.guest_id = g.guest_id 
-    WHERE 
-        DATE(cl.checkout_time) = '$selectedDate' 
-        AND (g.guest_name LIKE '%$search%')"; // Filter by selected date and search
-
+$sql = "SELECT cl.log_id, cl.checkout_time, cl.return_time, g.guest_name
+        FROM check_logs cl JOIN guests g ON cl.guest_id = g.guest_id
+        WHERE DATE(cl.checkout_time) = '$selectedDate'
+        AND (g.guest_name LIKE '%$search%')";
 $result = $conn->query($sql);
+$totalRows = $result ? $result->num_rows : 0;
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Report</title>
-    <link rel="stylesheet" href="dailyreport.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" 
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <title>التقرير اليومي — الفندق</title>
+  <?php include 'includes/head.php'; ?>
 </head>
 <body>
+<div class="hs-app">
+  <?php include 'includes/sidebar.php'; ?>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg bg-success navbar-light">
-    <div class="container-xxl">
-        <a class="navbar-brand" href="#">
-        <img src="assets/logo/Full_logo.png" alt="" width="auto" height="30" center>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" 
-                aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class="collapse navbar-collapse justify-content-end pe-3" id="main-nav">
-        <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link text-white me-2" href="Edit.php">تعديل</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="CheckIn.php">تسجيل دخول</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="CheckOut.php">تسجيل خروج</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="DailyReport.php">الكشف اليومي</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="RegesterNew.php">تسجيل الجدد</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="index.php">الرئسية</a></li>
-
-        </ul>
-    </div>
-</nav>
-
-<!-- Main Section -->
-<div class="section" id="body">
-    <div class="container-md mt-4 border border-4 border-success">
-        <div class="row mb-2">
-            <div class="col-md-12 bg-success d-flex align-items-center justify-content-between p-2">
-    
-                <!-- Calendar SVG Icon -->
-                <span class="text-white fs-3" role="button" id="calendarIcon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
-                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1zm1-1h12V3a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v1z"/>
-                    </svg>
-                </span>
-
-                <h1 class="text-center fs-1 text-white flex-grow-1" style="font-family: Arial, Helvetica, sans-serif;">
-                    الكشف اليومي
-                </h1>
-
-                <input type="date" id="datePicker" value="<?php echo $selectedDate; ?>" style="display: none;">
-            </div>
+  <div class="hs-main" id="mainContent">
+    <header class="hs-topbar">
+      <div class="hs-topbar-start">
+        <button class="hs-mob-btn" id="mobMenuBtn"><i class="fas fa-bars"></i></button>
+        <div>
+          <div class="hs-pg-title" data-i18n="rpt_title">التقرير اليومي</div>
+          <div class="hs-pg-sub"><?= date('d/m/Y', strtotime($selectedDate)) ?></div>
         </div>
-
-        <script>
-            const datePicker = document.getElementById('datePicker');
-            const calendarIcon = document.getElementById('calendarIcon');
-
-            // Show the date picker when the icon is clicked
-            calendarIcon.addEventListener('click', () => {
-                datePicker.showPicker();
-            });
-
-            // Redirect to the selected date when a date is chosen
-            datePicker.addEventListener('change', () => {
-                const selectedDate = datePicker.value;
-                window.location.href = `DailyReport.php?selected_date=${selectedDate}`;
-            });
-        </script>
-
-        <!-- Search Form -->
-        <form method="POST" class="mb-3 row" action="export_excel.php">
-            <button type="button" class="col-1 btn btn-success rounded-pill ms-5 me-2">بحث</button>
-            <input class="col-8 rounded-pill border ms-3" type="text" name="search" 
-                placeholder="ابحث عن اسم الضيف" value="<?php echo htmlspecialchars($search); ?>" />
-                <form method="POST" class="mb-3 row" action="export_excel.php?selected_date=<?php echo $selectedDate; ?>">
-                    <button type="submit" class="col-2 btn btn-success rounded-pill ms-2">Excel Report</button>
-                </form>
+      </div>
+      <div class="hs-topbar-end">
+        <form method="POST" action="export_excel.php?selected_date=<?= $selectedDate ?>" style="margin:0">
+          <button type="submit" class="hs-btn hs-btn-gold hs-btn-sm">
+            <i class="fas fa-file-excel"></i> <span data-i18n="export_xl">تصدير Excel</span>
+          </button>
         </form>
+        <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
+        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname">موظف</span></div>
+      </div>
+    </header>
 
+    <main class="hs-content hs-stagger">
 
-        <!-- Header Row -->
-        <div class="row m-2 text-center">
-            <div class="col-2 bg-success text-white p-1"><h5>الغاء</h5></div>
-            <div class="col-2 bg-success text-white p-1"><h5>وقت الخروج</h5></div>
-            <div class="col-2 bg-success text-white p-1"><h5>وقت الدخول</h5></div>
-            <div class="col-2 bg-success text-white p-1"><h5> </h5></div>
-            <div class="col-2 bg-success text-white p-1"><h5></h5></div>
-            <div class="col-2 bg-success text-white p-1"><h5>الاسم</h5></div>
-            
+      <!-- Stats Row -->
+      <div class="hs-g3 hs-mb-6">
+        <div class="hs-stat-card">
+          <div class="hs-stat-ic hs-stat-ic-g"><i class="fas fa-users"></i></div>
+          <div class="hs-stat-val"><?= $totalRows ?></div>
+          <div class="hs-stat-lbl">إجمالي السجلات</div>
         </div>
+        <div class="hs-stat-card">
+          <div class="hs-stat-ic hs-stat-ic-au"><i class="fas fa-calendar-day"></i></div>
+          <div class="hs-stat-val"><?= date('d', strtotime($selectedDate)) ?></div>
+          <div class="hs-stat-lbl"><?= date('F Y', strtotime($selectedDate)) ?></div>
+        </div>
+        <div class="hs-stat-card">
+          <div class="hs-stat-ic hs-stat-ic-b"><i class="fas fa-clock"></i></div>
+          <div class="hs-stat-val"><?= date('H:i') ?></div>
+          <div class="hs-stat-lbl">الوقت الحالي</div>
+        </div>
+      </div>
 
-        <!-- Data Rows -->
-        <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <div class="row m-1 text-center guest-row">
-                <div class="col-2 rounded-pill border border-5 bg-danger text-center">
-                        <form method="POST" action="delete_log.php" style="display: inline;">
-                            <input type="hidden" name="log_id" value="<?php echo $row['log_id']; ?>">
-                            <button type="submit" class="btn text-white fw-bold">X</button>
-                        </form>
-                    </div>
-                    <div class="col-2 rounded-pill border border-5 bg-primary text-white">
-                        <h5>
-                            <?php 
-                            echo $row['return_time'] ? date('H:i', strtotime($row['return_time'])) : 'لم يعد بعد'; 
-                            ?>
-                        </h5>
-                    </div>
-                    <div class="col-2 rounded-pill border border-5 bg-primary text-white">
-                        <h5><?php echo date('H:i', strtotime($row['checkout_time'])); ?></h5>
-                    </div>
-                    
-                    <div class="col-6 rounded-pill border border-5 bg-primary text-white">
-                        <h5><?php echo $row['guest_name']; ?></h5>
-                    </div>
-                    
-                </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <div class="row m-1 text-center">
-                <div class="col-12">
-                    <h5 class="text-danger">لا توجد بيانات للعرض</h5>
-                </div>
+      <!-- Filters Card -->
+      <div class="hs-card hs-mb-6">
+        <div class="hs-card-hd">
+          <div class="hs-card-title">
+            <div class="hs-card-ic"><i class="fas fa-filter"></i></div>
+            فلترة التقرير
+          </div>
+        </div>
+        <div class="hs-card-bd">
+          <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+            <!-- Date Picker -->
+            <div style="flex:1;min-width:200px">
+              <label class="hs-lbl" data-i18n="sel_date">اختر التاريخ</label>
+              <div style="position:relative">
+                <i class="fas fa-calendar" style="position:absolute;top:50%;right:13px;transform:translateY(-50%);color:var(--tx-3);font-size:14px;pointer-events:none"></i>
+                <input type="date" id="datePicker" class="hs-input" value="<?= $selectedDate ?>" style="padding-right:38px;cursor:pointer">
+              </div>
             </div>
-        <?php endif; ?>
-    </div>
+            <!-- Search -->
+            <form method="POST" style="flex:2;min-width:240px">
+              <label class="hs-lbl" data-i18n="search">بحث بالاسم</label>
+              <div class="hs-search-bar">
+                <i class="hs-search-ic fas fa-search"></i>
+                <input class="hs-search-in" type="text" name="search"
+                       placeholder="ابحث عن اسم الموظف..."
+                       value="<?= htmlspecialchars($search) ?>">
+              </div>
+            </form>
+            <form method="POST" style="align-self:flex-end">
+              <button type="submit" class="hs-btn hs-btn-primary">
+                <i class="fas fa-search"></i> بحث
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="hs-card">
+        <div class="hs-card-hd">
+          <div class="hs-card-title">
+            <div class="hs-card-ic"><i class="fas fa-table"></i></div>
+            سجلات اليوم
+          </div>
+          <span class="hs-badge hs-badge-g"><?= $totalRows ?> سجل</span>
+        </div>
+        <div class="hs-tbl-wrap" style="border:none;border-radius:0 0 var(--r-xl) var(--r-xl)">
+          <table class="hs-tbl">
+            <thead>
+              <tr>
+                <th data-i18n="col_name">الاسم</th>
+                <th data-i18n="col_ci">وقت المغادرة</th>
+                <th data-i18n="col_co">وقت العودة</th>
+                <th>الحالة</th>
+                <th data-i18n="col_del">حذف</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php if($result && $result->num_rows > 0): ?>
+                <?php while($row = $result->fetch_assoc()): ?>
+                  <tr>
+                    <td>
+                      <div style="display:flex;align-items:center;gap:10px">
+                        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--g-400),var(--g-600));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0">
+                          <?= mb_substr($row['guest_name'], 0, 1, 'UTF-8') ?>
+                        </div>
+                        <span style="font-weight:600"><?= htmlspecialchars($row['guest_name']) ?></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span style="font-family:monospace;background:var(--g-50);color:var(--g-700);padding:4px 10px;border-radius:var(--r-full);font-size:.85rem;font-weight:600">
+                        <?= date('H:i', strtotime($row['checkout_time'])) ?>
+                      </span>
+                    </td>
+                    <td>
+                      <?php if($row['return_time']): ?>
+                        <span style="font-family:monospace;background:var(--au-50);color:var(--au-700);padding:4px 10px;border-radius:var(--r-full);font-size:.85rem;font-weight:600">
+                          <?= date('H:i', strtotime($row['return_time'])) ?>
+                        </span>
+                      <?php else: ?>
+                        <span class="hs-badge hs-badge-au"><span class="hs-status-dot hs-dot-au hs-pulse"></span> خارج</span>
+                      <?php endif; ?>
+                    </td>
+                    <td>
+                      <?php if($row['return_time']): ?>
+                        <span class="hs-badge hs-badge-g"><i class="fas fa-check"></i> عاد</span>
+                      <?php else: ?>
+                        <span class="hs-badge hs-badge-au">غائب</span>
+                      <?php endif; ?>
+                    </td>
+                    <td>
+                      <form method="POST" action="delete_log.php" style="display:inline" onsubmit="return confirm('هل تريد حذف هذا السجل؟')">
+                        <input type="hidden" name="log_id" value="<?= $row['log_id'] ?>">
+                        <button type="submit" class="hs-btn hs-btn-danger hs-btn-ic hs-btn-sm" title="حذف">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <?php endwhile; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="5" style="text-align:center;padding:48px;color:var(--tx-3)">
+                    <i class="fas fa-inbox" style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:.3"></i>
+                    <span data-i18n="no_data">لا توجد بيانات للعرض</span>
+                  </td>
+                </tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
-        crossorigin="anonymous"></script>
+<div class="hs-toast-ctr"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('datePicker').addEventListener('change', function() {
+  window.location.href = `DailyReport.php?selected_date=${this.value}`;
+});
+</script>
 </body>
 </html>
-
-<?php
-$conn->close();  // Close the database connection
-?>
+<?php $conn->close(); ?>

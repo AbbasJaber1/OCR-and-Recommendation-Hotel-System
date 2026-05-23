@@ -5,7 +5,15 @@ ini_set('display_errors', 1);
 // Load environment variables
 require_once __DIR__ . '/env-loader.php';
 
-$apiKey = env('GOOGLE_VISION_API_KEY', '');  // Load from .env file
+$apiKey = env('GOOGLE_VISION_API_KEY', '');
+
+if (empty($apiKey) || $apiKey === 'your_google_vision_api_key_here') {
+    http_response_code(500);
+    echo json_encode([
+        'error' => 'Google Vision API key not configured'
+    ]);
+    exit;
+}
 
 header('Content-Type: application/json');
 

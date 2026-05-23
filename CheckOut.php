@@ -3,189 +3,174 @@ session_start();
 include 'connect.php';
 
 $search = '';
-
-// If Admin, show all guests. Otherwise, show only logged-in user.
-
 $sql = "SELECT guest_name FROM guests";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty(trim($_POST['search']))) {
     $search = $conn->real_escape_string($_POST['search']);
-    $sql = "SELECT guest_name FROM guests 
-            WHERE (guest_name LIKE '%$search%')";
-    
-        
-    
+    $sql = "SELECT guest_name FROM guests WHERE guest_name LIKE '%$search%'";
 }
-
 $result = $conn->query($sql);
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-Out</title>
-
-    <link rel="stylesheet" href="dailyreport.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
-          rel="stylesheet" crossorigin="anonymous">
-        
-
-    <script src="jquery-3.7.1.min.js?time=<?php echo time();?>"></script>
-
-    <!-- Load Face API Before script.js -->
-    <script defer src="face-recognition-javascript-webcam-faceapi-main/face-api.min.js?time=<?php echo time();?>"></script>
-    <script defer src="face-recognition-javascript-webcam-faceapi-main/script.js?time=<?php echo time();?>"></script>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js?time=<?php echo time();?>"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js?time=<?php echo time();?>"></script>
-  
-   
-
+  <title>تسجيل المغادرة — الفندق</title>
+  <?php include 'includes/head.php'; ?>
 </head>
-
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-success navbar-light">
-        <div class="container-xxl">
-            <a class="navbar-brand" href="#">
-            <img src="assets/logo/Full_logo.png" alt="" width="auto" height="30" center>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse justify-content-end pe-3" id="main-nav">
-        <ul class="navbar-nav">
+<div class="hs-app">
+  <?php include 'includes/sidebar.php'; ?>
 
-        <li class="nav-item"><a class="nav-link text-white" href="index.php">الرئسية</a></li> 
-        
-    </ul>
+  <div class="hs-main" id="mainContent">
+    <!-- Topbar -->
+    <header class="hs-topbar">
+      <div class="hs-topbar-start">
+        <button class="hs-mob-btn" id="mobMenuBtn"><i class="fas fa-bars"></i></button>
+        <div>
+          <div class="hs-pg-title" data-i18n="co_title">تسجيل المغادرة</div>
+          <div class="hs-pg-sub" data-i18n="co_sub">إدارة مغادرة الموظفين والضيوف</div>
         </div>
-    </nav>
+      </div>
+      <div class="hs-topbar-end">
+        <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
+        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname">موظف</span></div>
+      </div>
+    </header>
 
-    <!-- Face Recognition Modal -->
-    <div class="modal fade" id="faceRecModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">تأكيد الهوية باستخدام التعرف على الوجه</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <video id="faceRecVideo" width="100%" height="100%" autoplay></video>
-                    <canvas id="faceRecOverlay"></canvas>
-                    <p id="faceRecStatus" class="mt-3 text-danger">يرجى النظر إلى الكاميرا...</p>
-                </div>
+    <!-- Content -->
+    <main class="hs-content hs-stagger">
+
+      <!-- Search Card -->
+      <div class="hs-card hs-mb-6">
+        <div class="hs-card-hd">
+          <div class="hs-card-title">
+            <div class="hs-card-ic"><i class="fas fa-sign-out-alt"></i></div>
+            <span data-i18n="co_title">تسجيل المغادرة</span>
+          </div>
+          <span class="hs-badge hs-badge-g"><i class="fas fa-users me-1"></i><?= $result->num_rows ?> موظف</span>
+        </div>
+        <div class="hs-card-bd">
+          <form method="POST">
+            <div class="hs-search-bar" style="max-width:520px">
+              <i class="hs-search-ic fas fa-search"></i>
+              <input class="hs-search-in" type="text" name="search"
+                     placeholder="ابحث عن اسم الموظف..."
+                     value="<?= htmlspecialchars($search) ?>">
             </div>
+            <div style="display:flex;gap:10px;margin-top:14px">
+              <button type="submit" class="hs-btn hs-btn-primary hs-btn-sm">
+                <i class="fas fa-search"></i> <span data-i18n="search">بحث</span>
+              </button>
+              <?php if($search): ?>
+              <a href="CheckOut.php" class="hs-btn hs-btn-ghost hs-btn-sm">
+                <i class="fas fa-times"></i> مسح
+              </a>
+              <?php endif; ?>
+            </div>
+          </form>
         </div>
-    </div>
+      </div>
 
-    <!-- Page Content -->
-    <div class="section" id="body">
-        <!-- Check-Out Section -->
-        <div class="container-md mt-4 border border-4 border-success">
-            <div class="row mb-2">
-                <div class="col-md-12 bg-success">
-                    <h1 class="text-center p-1 fs-1 text-white">تسجيل دخول</h1>
+      <!-- Guest List -->
+      <div class="hs-card">
+        <div class="hs-card-hd">
+          <div class="hs-card-title">
+            <div class="hs-card-ic" style="background:#FEF2F2;color:#DC2626"><i class="fas fa-list"></i></div>
+            قائمة الموظفين
+          </div>
+        </div>
+        <div class="hs-card-bd" style="padding:0">
+          <?php if($result->num_rows === 0): ?>
+            <div style="text-align:center;padding:48px 24px;color:var(--tx-3)">
+              <i class="fas fa-users" style="font-size:3rem;margin-bottom:16px;display:block;opacity:.3"></i>
+              <p>لا توجد نتائج مطابقة</p>
+            </div>
+          <?php else: ?>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+              <?php while($row = $result->fetch_assoc()): ?>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;background:var(--s-1);border-radius:var(--r-lg);border:1px solid var(--bd-1);transition:var(--tf)" onmouseover="this.style.borderColor='var(--bd-2)';this.style.background='var(--g-25)'" onmouseout="this.style.borderColor='var(--bd-1)';this.style.background='var(--s-1)'">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--g-500),var(--g-700));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0">
+                      <?= mb_substr($row['guest_name'], 0, 1, 'UTF-8') ?>
+                    </div>
+                    <div>
+                      <div style="font-weight:600;color:var(--tx-1)"><?= htmlspecialchars($row['guest_name']) ?></div>
+                      <div style="font-size:.78rem;color:var(--tx-3)">موظف</div>
+                    </div>
+                  </div>
+                  <button type="button" class="hs-btn hs-btn-danger hs-btn-sm"
+                          onclick="startFaceRecognition('<?= htmlspecialchars($row['guest_name'], ENT_QUOTES) ?>', this)">
+                    <i class="fas fa-fingerprint"></i> تسجيل الخروج
+                  </button>
                 </div>
+              <?php endwhile; ?>
             </div>
-
-            <form method="POST" class="mb-3 mt-3 row">
-                <button type="submit" class="col-1 btn btn-primary rounded-pill border border-5 ms-5 me-2">بحث</button>
-                <input class="col-10 rounded-pill border border-5 ms-3" 
-                       type="text" name="search" placeholder="ابحث عن اسم " 
-                       value="<?php echo htmlspecialchars($search); ?>" />
-            </form>
-            
-
-            <div class="row text-center m-1">
-                <div class="col-3 bg-success text-white p-1"><h5>تسجل</h5></div>
-                <div class="col-3 bg-success text-white p-1"><h5> </h5></div>
-                <div class="col-3 bg-success text-white p-1"><h5> </h5></div>
-                <div class="col-3 bg-success text-white p-1"><h5>الاسم</h5></div>
-            </div>
-            
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <div class="row m-1">
-                            <div class="col-3 rounded-pill border border-5 bg-danger text-center">
-                                <button type="button" class="btn text-white fw-bold" 
-                                onclick="startFaceRecognition('<?php echo $row['guest_name']; ?>', this)">
-                                    ارسل
-                                </button>
-                            </div>
-                            
-                            <div class="col-9 rounded-pill border border-5 bg-primary text-white p-1">
-                                <h5 class="text-center"><?php echo $row['guest_name']; ?></h5>
-                            </div>
-                        </div>
-            <?php endwhile; ?>
+          <?php endif; ?>
         </div>
+      </div>
 
-        <!-- Check-In Table (Visible & Updates Automatically) -->
+      <!-- Pending Check-In -->
+      <div class="hs-mt-6">
         <div id="CheckInAjax">
-            <?php include 'CheckInTable.php'; ?>
+          <?php include 'CheckInTable.php'; ?>
         </div>
+      </div>
+
+    </main>
+  </div><!-- /hs-main -->
+</div><!-- /hs-app -->
+
+<!-- Face Recognition Modal (preserved IDs) -->
+<div class="modal fade" id="faceRecModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:20px;border:1px solid var(--bd-1);overflow:hidden">
+      <div class="modal-header" style="background:linear-gradient(135deg,var(--g-800),var(--g-700))">
+        <h5 class="modal-title text-white" style="font-size:.9rem;font-weight:700">
+          <i class="fas fa-camera me-2" style="color:var(--au-300)"></i>
+          تأكيد الهوية — التعرف على الوجه
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="stopWebcam()"></button>
+      </div>
+      <div class="modal-body text-center p-4" style="background:#0D1B0D">
+        <div style="position:relative;border-radius:16px;overflow:hidden;background:#000;margin-bottom:16px">
+          <video id="faceRecVideo" width="100%" autoplay style="display:block"></video>
+          <canvas id="faceRecOverlay" style="position:absolute;top:0;left:0"></canvas>
+          <div style="position:absolute;inset:14px;border:2px solid var(--g-400);border-radius:12px;pointer-events:none;animation:ocrPulse 2s ease-in-out infinite"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,.04);border-radius:12px;padding:10px;border:1px solid rgba(255,255,255,.06)">
+          <div class="hs-spin" style="border-top-color:var(--g-400);width:14px;height:14px;border-width:2px"></div>
+          <p id="faceRecStatus" class="mb-0" style="color:rgba(255,255,255,.7);font-size:.85rem">يرجى النظر إلى الكاميرا...</p>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
 
-    <script>
+<div class="hs-toast-ctr"></div>
 
-        function CheckInS() {
-        $.ajax({
-            url: 'CheckInTable.php', // PHP script for updated data
-            type: 'POST',           // Request type
-            async: true,            // Asynchronous request
-            data: {
-                show: 1             
-            },
-            success: function(response) {
-                // Replace the content of #CheckInAjax
-                $('#CheckInAjax').html(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error:", status, error);
-            }
-        });
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="face-recognition-javascript-webcam-faceapi-main/face-api.min.js?t=<?= time() ?>"></script>
+<script src="face-recognition-javascript-webcam-faceapi-main/script.js?t=<?= time() ?>"></script>
+<script>
+function CheckInS() {
+  $.ajax({ url:'CheckInTable.php', type:'POST', data:{show:1},
+    success: r => $('#CheckInAjax').html(r),
+    error: (x,s,e) => console.error('AJAX Error:',s,e)
+  });
+}
+function checkIn(logId) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST','checkin_action.php',true);
+  xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  xhr.onload = function() {
+    if(xhr.status===200 && xhr.responseText.trim()==='Check-in successful') {
+      CheckInS();
+      HsToast.success('تم تسجيل الوصول بنجاح');
     }
-
-        function checkIn(logId) {
-        const xhr = new XMLHttpRequest();
-            xhr.open("POST", "checkin_action.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    const response = xhr.responseText.trim();
-
-                    // Check for success message
-                    if (response === "Check-in successful") {
-                        // Refresh the CheckIn table dynamically
-                        CheckInS();
-                        console.log("Check-in successful");
-                    } else {
-                        console.error("Error during check-in:", response);
-                    }
-                } else {
-                    console.error("Error during check-in:", xhr.statusText);
-                }
-            };
-
-            xhr.onerror = function () {
-                console.error("Request failed.");
-            };
-
-            xhr.send(`logId=${logId}`);
-        }
-    </script>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js?time=<?php echo time();?>"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js?time=<?php echo time();?>"></script>
+  };
+  xhr.send(`logId=${logId}`);
+}
+</script>
 </body>
 </html>
-
 <?php $conn->close(); ?>

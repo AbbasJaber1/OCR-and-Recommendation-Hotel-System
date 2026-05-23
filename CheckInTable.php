@@ -1,105 +1,85 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() == PHP_SESSION_NONE) session_start();
 include 'connect.php';
 
-// Fetch updated guest logs
 $guest_logs = [];
-$guest_query = $conn->prepare("SELECT cl.log_id, cl.guest_id, g.guest_name 
-    FROM check_logs cl
-    JOIN guests g ON cl.guest_id = g.guest_id
+$guest_query = $conn->prepare("SELECT cl.log_id, cl.guest_id, g.guest_name
+    FROM check_logs cl JOIN guests g ON cl.guest_id = g.guest_id
     WHERE cl.return_time IS NULL");
 $guest_query->execute();
 $guest_result = $guest_query->get_result();
-$guest_logs = $guest_result->fetch_all(MYSQLI_ASSOC);
-$arr_of_guest = [];
+$arr_of_guest = $guest_result->fetch_all(MYSQLI_ASSOC);
 
-foreach ($guest_logs as $log) {
-    // Check if the guest_id matches the user_id from the session
-    
-        // Add the matching guest row to the $arr_of_guest array
-        $arr_of_guest[] = $log;
-    
-}
-
-// Search functionality
 $search = '';
-$search_results = $guest_logs;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search']) && !empty(trim($_POST['search']))) {
+$search_results = $arr_of_guest;
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['search']) && !empty(trim($_POST['search']))) {
     $search = $conn->real_escape_string(trim($_POST['search']));
-    $search_query = "SELECT cl.log_id, cl.guest_id, g.guest_name
-                     FROM check_logs cl 
-                     JOIN guests g ON cl.guest_id = g.guest_id 
-                     WHERE cl.return_time IS NULL 
-                     AND (g.guest_name LIKE '%$search%')";
-    $search_result = $conn->query($search_query);
-    if ($search_result) {
-        $search_results = $search_result->fetch_all(MYSQLI_ASSOC);
-    } else {
-        $search_results = [];
-    }
+    $sq = "SELECT cl.log_id, cl.guest_id, g.guest_name
+           FROM check_logs cl JOIN guests g ON cl.guest_id=g.guest_id
+           WHERE cl.return_time IS NULL AND g.guest_name LIKE '%$search%'";
+    $sr = $conn->query($sq);
+    if($sr) $search_results = $sr->fetch_all(MYSQLI_ASSOC);
+    else $search_results = [];
 }
-
-// Generate HTML output for the table
+$arr_of_guest = $search_results;
 ?>
-<div class="container-md mt-4 border border-4 border-success">
-    <div class="row mb-2">
-        <div class="col-md-12 bg-success">
-            <h1 class="text-center p-1 fs-1 text-white">تسجيل دخول</h1>
-        </div>
+
+<!-- Pending Check-In Card -->
+<div class="hs-card">
+  <div class="hs-card-hd">
+    <div class="hs-card-title">
+      <div class="hs-card-ic" style="background:var(--g-50);color:var(--g-700)"><i class="fas fa-sign-in-alt"></i></div>
+      <span data-i18n="ci_title">تسجيل الوصول</span>
     </div>
-    
-   
-        <!-- Search Bar -->
-        <form method="POST" class="mb-3 mt-3 row">
-            <button type="submit" class="col-1 btn btn-primary rounded-pill border border-5 ms-5 me-2">بحث</button>
-            <input class="col-10 rounded-pill border border-5 ms-3" 
-                   type="text" name="search" placeholder="ابحث عن اسم أو رقم غرفة" 
-                   value="<?php echo htmlspecialchars($search); ?>" />
-        </form>
- 
+    <span class="hs-badge hs-badge-<?= count($arr_of_guest) > 0 ? 'au' : 'gray' ?>">
+      <?= count($arr_of_guest) ?> في الانتظار
+    </span>
+  </div>
 
-    <!-- Column Titles -->
-    <div class="row m-2 text-center">
-        <div class="col-3 rounded-pill border border-5 bg-success text-white p-1">
-            <h5 class="text-center">تسجيل</h5>
-        </div>
-        <div class="col-3 rounded-pill border border-5 bg-success text-white p-1">
-            <h5 class="text-center">سبب الخروج</h5>
-        </div>
-        <div class="col-3 rounded-pill border border-5 bg-success text-white p-1">
-            <h5 class="text-center">رقم الغرفة</h5>
-        </div>
-        <div class="col-3 rounded-pill border border-5 bg-success text-white p-1">
-            <h5 class="text-center">الاسم</h5>
-        </div>
-    </div>
+  <!-- Search -->
+  <div style="padding:16px 24px;border-bottom:1px solid var(--bd-1)">
+    <form method="POST" action="CheckIn.php">
+      <div class="hs-search-bar" style="max-width:440px">
+        <i class="hs-search-ic fas fa-search"></i>
+        <input class="hs-search-in" type="text" name="search"
+               placeholder="ابحث عن اسم..." value="<?= htmlspecialchars($search) ?>">
+      </div>
+      <button type="submit" class="hs-btn hs-btn-primary hs-btn-sm" style="margin-top:10px">
+        <i class="fas fa-search"></i> بحث
+      </button>
+    </form>
+  </div>
 
-    <!-- Data Rows -->
-
-    
-        <?php foreach ($arr_of_guest as $log): ?>
-            <div class="row m-1">
-                <div class="col-3 rounded-pill border border-5 bg-danger text-center">
-                    <button type="button" class="btn text-white fw-bold" 
-                            onclick="checkIn(<?php echo $log['log_id']; ?>)">
-                        ارسل
-                    </button>
+  <!-- List -->
+  <div class="hs-card-bd" style="padding:0">
+    <?php if(empty($arr_of_guest)): ?>
+      <div style="text-align:center;padding:48px 24px;color:var(--tx-3)">
+        <i class="fas fa-check-circle" style="font-size:3rem;margin-bottom:16px;display:block;color:var(--g-200)"></i>
+        <p style="font-weight:600" data-i18n="no_data">لا توجد بيانات للعرض</p>
+        <p style="font-size:.85rem">جميع الموظفين موجودون</p>
+      </div>
+    <?php else: ?>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+        <?php foreach($arr_of_guest as $log): ?>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;background:var(--au-50);border-radius:var(--r-lg);border:1px solid var(--au-100)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--au-300),var(--au-500));display:flex;align-items:center;justify-content:center;color:var(--tx-1);font-weight:700;font-size:.85rem;flex-shrink:0">
+                <?= mb_substr($log['guest_name'], 0, 1, 'UTF-8') ?>
+              </div>
+              <div>
+                <div style="font-weight:600;color:var(--tx-1)"><?= htmlspecialchars($log['guest_name']) ?></div>
+                <div style="font-size:.78rem;color:var(--au-700);display:flex;align-items:center;gap:4px">
+                  <span class="hs-status-dot hs-dot-au hs-pulse"></span> خارج المقر
                 </div>
-            
-                <div class="col-9 rounded-pill border border-5 bg-primary text-white p-1">
-                    <h5 class="text-center"><?php echo htmlspecialchars($log['guest_name']); ?></h5>
-                </div>
+              </div>
             </div>
-        <?php endforeach;
-            if(empty($arr_of_guest)){?>
-                <div class="row m-1">
-            <div class="col-12 text-center">
-                <h5 class="text-danger">لا توجد بيانات للعرض</h5>
-            </div>
-        </div>
-        <?php
-            }
-        ?>
+            <button type="button" class="hs-btn hs-btn-gold hs-btn-sm"
+                    onclick="checkIn(<?= $log['log_id'] ?>)">
+              <i class="fas fa-check"></i> <span data-i18n="ci_btn">تأكيد الوصول</span>
+            </button>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </div>
 </div>
