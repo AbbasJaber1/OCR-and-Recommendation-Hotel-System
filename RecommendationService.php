@@ -13,6 +13,7 @@ require_once 'connect.php';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>خدمة التوصيات — الفندق</title>
   <?php include 'includes/head.php'; ?>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     /* Loading overlay */
     #loadingOverlay {
@@ -104,7 +105,8 @@ require_once 'connect.php';
       color: #fff;
       border-radius: 0;
     }
-    .results-map { height: 350px; border-radius: var(--r-lg); overflow: hidden; }
+    .results-map { height: 350px; border-radius: var(--r-lg); overflow: hidden; z-index: 0; }
+    .leaflet-attribution-flag { display: none !important; }
 
     /* Place cards */
     .place-card {
@@ -330,7 +332,7 @@ require_once 'connect.php';
             </div>
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
               <a href="#" id="openMapsBtn" target="_blank" class="btn btn-light btn-lg me-2">
-                <i class="fab fa-google me-2"></i> فتح في Google Maps
+                <i class="fas fa-map me-2"></i> فتح في OpenStreetMap
               </a>
               <button type="button" class="btn btn-outline-light" id="copyLinkBtn">
                 <i class="fas fa-copy me-2"></i> نسخ الرابط
@@ -379,6 +381,7 @@ require_once 'connect.php';
 
 <div class="hs-toast-ctr"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // State
 let selectedGuest = null;
@@ -388,7 +391,6 @@ let resultsMap = null;
 let resultsMarkers = [];
 let hotelMarker = null;
 let selectedPlace = null;
-let mapsApiKey = null;
 let debounceTimer = null;
 
 // Category icons and colors
@@ -408,25 +410,11 @@ const categoryStyles = {
 };
 
 // Initialize
-document.addEventListener('DOMContentLoaded', async function() {
-    await loadMapsApiKey();
+document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
     setupGuestSearch();
     setupForm();
 });
-
-// Load Maps API Key
-async function loadMapsApiKey() {
-    try {
-        const response = await fetch('api/recommendation/maps_config.php');
-        const data = await response.json();
-        if (data.success && data.data.apiKey) {
-            mapsApiKey = data.data.apiKey;
-        }
-    } catch (error) {
-        console.error('Failed to load maps API key:', error);
-    }
-}
 
 // Load categories
 async function loadCategories() {
@@ -648,9 +636,10 @@ function showResults(data) {
     const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
     modal.show();
 
-    // Initialize map after modal is shown
+    // Init map after modal finishes opening (so the container has real dimensions)
     document.getElementById('resultsModal').addEventListener('shown.bs.modal', () => {
         initResultsMap(data);
+        if (resultsMap) resultsMap.invalidateSize();
     }, { once: true });
 }
 
@@ -722,77 +711,59 @@ function getStarRating(rating) {
     return html;
 }
 
-// Initialize results map
+// Initialize / recreate results map with Leaflet
 function initResultsMap(data) {
-    if (!mapsApiKey) {
-        document.getElementById('resultsMap').innerHTML = `
-            <div class="d-flex align-items-center justify-content-center h-100 bg-light">
-                <div class="text-center">
-                    <i class="fas fa-map fa-3x text-muted mb-3"></i>
-                    <p>Google Maps غير متاح</p>
-                </div>
-            </div>
-        `;
-        return;
+    // Destroy old map instance to avoid "already initialized" error
+    if (resultsMap) {
+        resultsMap.remove();
+        resultsMap = null;
+        resultsMarkers = [];
     }
-
-    // Load Google Maps if not loaded
-    if (typeof google === 'undefined') {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${mapsApiKey}&callback=onResultsMapReady`;
-        script.async = true;
-        window.onResultsMapReady = () => createResultsMap(data);
-        document.head.appendChild(script);
-    } else {
-        createResultsMap(data);
-    }
+    createResultsMap(data);
 }
 
-// Create results map
 function createResultsMap(data) {
     const mapDiv = document.getElementById('resultsMap');
 
-    resultsMap = new google.maps.Map(mapDiv, {
-        center: { lat: data.hotel.lat, lng: data.hotel.lng },
-        zoom: 14,
-        mapTypeControl: false
-    });
+    resultsMap = L.map(mapDiv).setView([data.hotel.lat, data.hotel.lng], 14);
 
-    // Clear old markers
-    resultsMarkers.forEach(m => m.setMap(null));
-    resultsMarkers = [];
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+    }).addTo(resultsMap);
 
     // Hotel marker
-    hotelMarker = new google.maps.Marker({
-        position: { lat: data.hotel.lat, lng: data.hotel.lng },
-        map: resultsMap,
-        icon: {
-            url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-        },
-        title: 'الفندق'
+    const hotelIcon = L.divIcon({
+        className: '',
+        html: `<div style="background:linear-gradient(135deg,#1D4ED8,#1e40af);color:#fff;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4)"><i class="fas fa-hotel"></i></div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
     });
+    hotelMarker = L.marker([data.hotel.lat, data.hotel.lng], { icon: hotelIcon })
+        .addTo(resultsMap)
+        .bindPopup('الفندق');
 
     // Place markers
-    const bounds = new google.maps.LatLngBounds();
-    bounds.extend(hotelMarker.getPosition());
+    const bounds = L.latLngBounds([[data.hotel.lat, data.hotel.lng]]);
 
     data.places.forEach((place, index) => {
-        const marker = new google.maps.Marker({
-            position: { lat: place.latitude, lng: place.longitude },
-            map: resultsMap,
-            label: {
-                text: String(index + 1),
-                color: 'white'
-            },
-            title: place.name
+        const placeIcon = L.divIcon({
+            className: '',
+            html: `<div style="background:linear-gradient(135deg,var(--g-500),var(--g-700));color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)">${index + 1}</div>`,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
         });
 
-        marker.addListener('click', () => selectPlace(index));
-        resultsMarkers.push(marker);
-        bounds.extend(marker.getPosition());
+        const m = L.marker([place.latitude, place.longitude], { icon: placeIcon })
+            .addTo(resultsMap)
+            .bindPopup(`<strong>${place.name}</strong><br>${place.distanceText}`)
+            .on('click', () => selectPlace(index));
+
+        resultsMarkers.push(m);
+        bounds.extend([place.latitude, place.longitude]);
     });
 
-    resultsMap.fitBounds(bounds);
+    resultsMap.fitBounds(bounds, { padding: [30, 30] });
 }
 
 // Select a place
@@ -808,21 +779,21 @@ function selectPlace(index) {
     document.getElementById('selectedPlaceName').textContent = selectedPlace.name;
     document.getElementById('selectedPlaceDistance').textContent = selectedPlace.distanceText;
 
-    // Generate Google Maps link
+    // Generate OSM directions link
     const hotelLat = searchResults.hotel.lat;
     const hotelLng = searchResults.hotel.lng;
-    const destLat = selectedPlace.latitude;
-    const destLng = selectedPlace.longitude;
+    const destLat  = selectedPlace.latitude;
+    const destLng  = selectedPlace.longitude;
 
-    const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${hotelLat},${hotelLng}&destination=${destLat},${destLng}&travelmode=driving`;
+    const directionsUrl = `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=${hotelLat},${hotelLng};${destLat},${destLng}`;
 
     document.getElementById('openMapsBtn').href = directionsUrl;
     document.getElementById('directionsCard').style.display = 'block';
 
     // Highlight marker on map
     if (resultsMap && resultsMarkers[index]) {
-        resultsMap.setCenter(resultsMarkers[index].getPosition());
-        resultsMap.setZoom(16);
+        resultsMap.setView(resultsMarkers[index].getLatLng(), 16);
+        resultsMarkers[index].openPopup();
     }
 }
 
