@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'connect.php';
 
 $selectedDate = isset($_GET['selected_date']) ? $_GET['selected_date'] : date('Y-m-d');

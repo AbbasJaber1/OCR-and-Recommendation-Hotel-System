@@ -28,8 +28,8 @@ $arr_of_guest = $search_results;
 <div class="hs-card">
   <div class="hs-card-hd">
     <div class="hs-card-title">
-      <div class="hs-card-ic" style="background:var(--g-50);color:var(--g-700)"><i class="fas fa-sign-in-alt"></i></div>
-      <span data-i18n="ci_title">تسجيل الوصول</span>
+      <div class="hs-card-ic" style="background:var(--g-50);color:var(--g-700)"><i class="fas fa-sign-out-alt"></i></div>
+      <span data-i18n="co_title">تسجيل المغادرة</span>
     </div>
     <span class="hs-badge hs-badge-<?= count($arr_of_guest) > 0 ? 'au' : 'gray' ?>">
       <?= count($arr_of_guest) ?> في الانتظار
@@ -75,7 +75,7 @@ $arr_of_guest = $search_results;
             </div>
             <button type="button" class="hs-btn hs-btn-gold hs-btn-sm"
                     onclick="checkIn(<?= $log['log_id'] ?>)">
-              <i class="fas fa-check"></i> <span data-i18n="ci_btn">تأكيد الوصول</span>
+              <i class="fas fa-check"></i> <span data-i18n="co_btn">تأكيد المغادرة</span>
             </button>
           </div>
         <?php endforeach; ?>

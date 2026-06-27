@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'connect.php';
 
 $search = isset($_POST['search']) ? $_POST['search'] : '';

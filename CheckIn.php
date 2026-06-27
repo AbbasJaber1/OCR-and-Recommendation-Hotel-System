@@ -1,10 +1,11 @@
 <?php
+session_start();
 include 'connect.php';
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <title>تسجيل الوصول — الفندق</title>
+  <title>تسجيل المغادرة — الفندق</title>
   <?php include 'includes/head.php'; ?>
 </head>
 <body>
@@ -16,8 +17,8 @@ include 'connect.php';
       <div class="hs-topbar-start">
         <button class="hs-mob-btn" id="mobMenuBtn"><i class="fas fa-bars"></i></button>
         <div>
-          <div class="hs-pg-title" data-i18n="ci_title">تسجيل الوصول</div>
-          <div class="hs-pg-sub" data-i18n="ci_sub">الضيوف في انتظار الوصول</div>
+          <div class="hs-pg-title" data-i18n="co_title">تسجيل المغادرة</div>
+          <div class="hs-pg-sub" data-i18n="co_sub">الضيوف في انتظار المغادرة</div>
         </div>
       </div>
       <div class="hs-topbar-end">

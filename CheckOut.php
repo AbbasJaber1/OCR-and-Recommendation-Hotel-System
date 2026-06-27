@@ -14,7 +14,7 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <title>تسجيل المغادرة — الفندق</title>
+  <title>تسجيل الوصول — الفندق</title>
   <?php include 'includes/head.php'; ?>
 </head>
 <body>
@@ -27,8 +27,8 @@ $result = $conn->query($sql);
       <div class="hs-topbar-start">
         <button class="hs-mob-btn" id="mobMenuBtn"><i class="fas fa-bars"></i></button>
         <div>
-          <div class="hs-pg-title" data-i18n="co_title">تسجيل المغادرة</div>
-          <div class="hs-pg-sub" data-i18n="co_sub">إدارة مغادرة الموظفين والضيوف</div>
+          <div class="hs-pg-title" data-i18n="ci_title">تسجيل الوصول</div>
+          <div class="hs-pg-sub" data-i18n="ci_sub">تسجيل وصول الموظفين والضيوف</div>
         </div>
       </div>
       <div class="hs-topbar-end">
@@ -44,8 +44,8 @@ $result = $conn->query($sql);
       <div class="hs-card hs-mb-6">
         <div class="hs-card-hd">
           <div class="hs-card-title">
-            <div class="hs-card-ic"><i class="fas fa-sign-out-alt"></i></div>
-            <span data-i18n="co_title">تسجيل المغادرة</span>
+            <div class="hs-card-ic"><i class="fas fa-sign-in-alt"></i></div>
+            <span data-i18n="ci_title">تسجيل الوصول</span>
           </div>
           <span class="hs-badge hs-badge-g"><i class="fas fa-users me-1"></i><?= $result->num_rows ?> موظف</span>
         </div>
@@ -98,9 +98,9 @@ $result = $conn->query($sql);
                       <div style="font-size:.78rem;color:var(--tx-3)">موظف</div>
                     </div>
                   </div>
-                  <button type="button" class="hs-btn hs-btn-danger hs-btn-sm"
+                  <button type="button" class="hs-btn hs-btn-primary hs-btn-sm"
                           onclick="startFaceRecognition('<?= htmlspecialchars($row['guest_name'], ENT_QUOTES) ?>', this)">
-                    <i class="fas fa-fingerprint"></i> تسجيل الخروج
+                    <i class="fas fa-fingerprint"></i> تسجيل الوصول
                   </button>
                 </div>
               <?php endwhile; ?>

@@ -1,4 +1,7 @@
-<?php $cp = basename($_SERVER['PHP_SELF']); ?>
+<?php
+$cp = basename($_SERVER['PHP_SELF']);
+$isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
+?>
 <div class="hs-sidebar-overlay" id="sidebarOverlay"></div>
 <aside class="hs-sidebar" id="sidebar">
   <div class="hs-sidebar-hd">
@@ -22,6 +25,7 @@
       </a>
     </div>
 
+    <?php if ($isLoggedIn): ?>
     <div class="hs-nav-sec" data-i18n="operations">العمليات</div>
     <div class="hs-nav-item">
       <a class="hs-nav-link <?= $cp==='RegesterNewGuest.php'?'active':'' ?>" href="RegesterNewGuest.php">
@@ -29,19 +33,22 @@
         <span class="hs-nav-tx" data-i18n="guest_reg">تسجيل ضيف جديد</span>
       </a>
     </div>
+    <?php endif; ?>
+
     <div class="hs-nav-item">
       <a class="hs-nav-link <?= $cp==='CheckOut.php'?'active':'' ?>" href="CheckOut.php">
-        <span class="hs-nav-ic"><i class="fas fa-sign-out-alt"></i></span>
-        <span class="hs-nav-tx" data-i18n="checkout">تسجيل المغادرة</span>
-      </a>
-    </div>
-    <div class="hs-nav-item">
-      <a class="hs-nav-link <?= $cp==='CheckIn.php'?'active':'' ?>" href="CheckIn.php">
         <span class="hs-nav-ic"><i class="fas fa-sign-in-alt"></i></span>
         <span class="hs-nav-tx" data-i18n="checkin">تسجيل الوصول</span>
       </a>
     </div>
+    <div class="hs-nav-item">
+      <a class="hs-nav-link <?= $cp==='CheckIn.php'?'active':'' ?>" href="CheckIn.php">
+        <span class="hs-nav-ic"><i class="fas fa-sign-out-alt"></i></span>
+        <span class="hs-nav-tx" data-i18n="checkout">تسجيل المغادرة</span>
+      </a>
+    </div>
 
+    <?php if ($isLoggedIn): ?>
     <div class="hs-nav-sec" data-i18n="management">الإدارة</div>
     <div class="hs-nav-item">
       <a class="hs-nav-link <?= $cp==='RegesterNew.php'?'active':'' ?>" href="RegesterNew.php">
@@ -75,10 +82,11 @@
         <span class="hs-nav-tx" data-i18n="rec_settings">إعدادات التوصيات</span>
       </a>
     </div>
+    <?php endif; ?>
   </nav>
 
   <div class="hs-sidebar-ft">
- <button class="hs-sidebar-ft-btn" onclick="Lang.toggle()">
+    <button class="hs-sidebar-ft-btn" onclick="Lang.toggle()">
       <i class="fas fa-globe" style="font-size:15px"></i>
       <span id="langBtn" class="hs-nav-tx">English</span>
     </button>
