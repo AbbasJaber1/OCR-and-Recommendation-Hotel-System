@@ -24,7 +24,7 @@ include 'connect.php';
       <div class="hs-topbar-end">
         <button class="hs-icon-btn" onclick="CheckInS()" title="تحديث"><i class="fas fa-sync-alt"></i></button>
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
-        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname">موظف</span></div>
+        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname" data-i18n="employee">موظف</span></div>
       </div>
     </header>
 

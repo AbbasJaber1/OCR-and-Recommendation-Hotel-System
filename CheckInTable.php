@@ -32,7 +32,7 @@ $arr_of_guest = $search_results;
       <span data-i18n="co_title">تسجيل المغادرة</span>
     </div>
     <span class="hs-badge hs-badge-<?= count($arr_of_guest) > 0 ? 'au' : 'gray' ?>">
-      <?= count($arr_of_guest) ?> في الانتظار
+      <?= count($arr_of_guest) ?> <span data-i18n="pending">في الانتظار</span>
     </span>
   </div>
 
@@ -42,6 +42,7 @@ $arr_of_guest = $search_results;
       <div class="hs-search-bar" style="max-width:440px">
         <i class="hs-search-ic fas fa-search"></i>
         <input class="hs-search-in" type="text" name="search"
+               data-i18n="search_name_ph" data-i18n-attr="placeholder"
                placeholder="ابحث عن اسم..." value="<?= htmlspecialchars($search) ?>">
       </div>
       <button type="submit" class="hs-btn hs-btn-primary hs-btn-sm" style="margin-top:10px">
@@ -56,7 +57,7 @@ $arr_of_guest = $search_results;
       <div style="text-align:center;padding:48px 24px;color:var(--tx-3)">
         <i class="fas fa-check-circle" style="font-size:3rem;margin-bottom:16px;display:block;color:var(--g-200)"></i>
         <p style="font-weight:600" data-i18n="no_data">لا توجد بيانات للعرض</p>
-        <p style="font-size:.85rem">جميع الموظفين موجودون</p>
+        <p style="font-size:.85rem" data-i18n="all_present">جميع الموظفين موجودون</p>
       </div>
     <?php else: ?>
       <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
@@ -69,7 +70,7 @@ $arr_of_guest = $search_results;
               <div>
                 <div style="font-weight:600;color:var(--tx-1)"><?= htmlspecialchars($log['guest_name']) ?></div>
                 <div style="font-size:.78rem;color:var(--au-700);display:flex;align-items:center;gap:4px">
-                  <span class="hs-status-dot hs-dot-au hs-pulse"></span> خارج المقر
+                  <span class="hs-status-dot hs-dot-au hs-pulse"></span> <span data-i18n="outside">خارج المقر</span>
                 </div>
               </div>
             </div>

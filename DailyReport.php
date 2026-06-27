@@ -38,7 +38,7 @@ $totalRows = $result ? $result->num_rows : 0;
           </button>
         </form>
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
-        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname">موظف</span></div>
+        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname" data-i18n="employee">موظف</span></div>
       </div>
     </header>
 
@@ -49,7 +49,7 @@ $totalRows = $result ? $result->num_rows : 0;
         <div class="hs-stat-card">
           <div class="hs-stat-ic hs-stat-ic-g"><i class="fas fa-users"></i></div>
           <div class="hs-stat-val"><?= $totalRows ?></div>
-          <div class="hs-stat-lbl">إجمالي السجلات</div>
+          <div class="hs-stat-lbl" data-i18n="total_records">إجمالي السجلات</div>
         </div>
         <div class="hs-stat-card">
           <div class="hs-stat-ic hs-stat-ic-au"><i class="fas fa-calendar-day"></i></div>
@@ -59,7 +59,7 @@ $totalRows = $result ? $result->num_rows : 0;
         <div class="hs-stat-card">
           <div class="hs-stat-ic hs-stat-ic-b"><i class="fas fa-clock"></i></div>
           <div class="hs-stat-val"><?= date('H:i') ?></div>
-          <div class="hs-stat-lbl">الوقت الحالي</div>
+          <div class="hs-stat-lbl" data-i18n="current_time">الوقت الحالي</div>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ $totalRows = $result ? $result->num_rows : 0;
         <div class="hs-card-hd">
           <div class="hs-card-title">
             <div class="hs-card-ic"><i class="fas fa-filter"></i></div>
-            فلترة التقرير
+            <span data-i18n="filter_report">فلترة التقرير</span>
           </div>
         </div>
         <div class="hs-card-bd">
@@ -83,10 +83,11 @@ $totalRows = $result ? $result->num_rows : 0;
             </div>
             <!-- Search -->
             <form method="POST" style="flex:2;min-width:240px">
-              <label class="hs-lbl" data-i18n="search">بحث بالاسم</label>
+              <label class="hs-lbl" data-i18n="search_by_name">بحث بالاسم</label>
               <div class="hs-search-bar">
                 <i class="hs-search-ic fas fa-search"></i>
                 <input class="hs-search-in" type="text" name="search"
+                       data-i18n="search_employee_ph" data-i18n-attr="placeholder"
                        placeholder="ابحث عن اسم الموظف..."
                        value="<?= htmlspecialchars($search) ?>">
               </div>
@@ -105,9 +106,9 @@ $totalRows = $result ? $result->num_rows : 0;
         <div class="hs-card-hd">
           <div class="hs-card-title">
             <div class="hs-card-ic"><i class="fas fa-table"></i></div>
-            سجلات اليوم
+            <span data-i18n="today_records">سجلات اليوم</span>
           </div>
-          <span class="hs-badge hs-badge-g"><?= $totalRows ?> سجل</span>
+          <span class="hs-badge hs-badge-g"><?= $totalRows ?> <span data-i18n="record_count">سجل</span></span>
         </div>
         <div class="hs-tbl-wrap" style="border:none;border-radius:0 0 var(--r-xl) var(--r-xl)">
           <table class="hs-tbl">
@@ -116,7 +117,7 @@ $totalRows = $result ? $result->num_rows : 0;
                 <th data-i18n="col_name">الاسم</th>
                 <th data-i18n="col_ci">وقت المغادرة</th>
                 <th data-i18n="col_co">وقت العودة</th>
-                <th>الحالة</th>
+                <th data-i18n="status">الحالة</th>
                 <th data-i18n="col_del">حذف</th>
               </tr>
             </thead>
@@ -143,20 +144,21 @@ $totalRows = $result ? $result->num_rows : 0;
                           <?= date('H:i', strtotime($row['return_time'])) ?>
                         </span>
                       <?php else: ?>
-                        <span class="hs-badge hs-badge-au"><span class="hs-status-dot hs-dot-au hs-pulse"></span> خارج</span>
+                        <span class="hs-badge hs-badge-au"><span class="hs-status-dot hs-dot-au hs-pulse"></span><span data-i18n="absent"> خارج</span></span>
                       <?php endif; ?>
                     </td>
                     <td>
                       <?php if($row['return_time']): ?>
-                        <span class="hs-badge hs-badge-g"><i class="fas fa-check"></i> عاد</span>
+                        <span class="hs-badge hs-badge-g"><i class="fas fa-check"></i> <span data-i18n="returned">عاد</span></span>
                       <?php else: ?>
-                        <span class="hs-badge hs-badge-au">غائب</span>
+                        <span class="hs-badge hs-badge-au" data-i18n="absent">غائب</span>
                       <?php endif; ?>
                     </td>
                     <td>
-                      <form method="POST" action="delete_log.php" style="display:inline" onsubmit="return confirm('هل تريد حذف هذا السجل؟')">
+                      <form method="POST" action="delete_log.php" style="display:inline" onsubmit="return confirm(Lang.t('confirm_delete_record'))">
                         <input type="hidden" name="log_id" value="<?= $row['log_id'] ?>">
-                        <button type="submit" class="hs-btn hs-btn-danger hs-btn-ic hs-btn-sm" title="حذف">
+                        <button type="submit" class="hs-btn hs-btn-danger hs-btn-ic hs-btn-sm"
+                              data-i18n="col_del" data-i18n-attr="title" title="حذف">
                           <i class="fas fa-trash-alt"></i>
                         </button>
                       </form>

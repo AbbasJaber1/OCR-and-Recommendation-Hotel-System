@@ -161,8 +161,8 @@ require_once 'connect.php';
 <div id="loadingOverlay" style="display:none">
   <div class="loading-spinner">
     <div class="hs-spin hs-spin-lg" style="margin:0 auto 20px;border-top-color:var(--g-500)"></div>
-    <h5 style="color:var(--tx-1);margin-bottom:6px">جاري البحث...</h5>
-    <p style="color:var(--tx-3);font-size:.875rem;margin:0">يرجى الانتظار</p>
+    <h5 style="color:var(--tx-1);margin-bottom:6px" data-i18n="searching">جاري البحث...</h5>
+    <p style="color:var(--tx-3);font-size:.875rem;margin:0" data-i18n="please_wait">يرجى الانتظار</p>
   </div>
 </div>
 
@@ -182,7 +182,7 @@ require_once 'connect.php';
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
         <div class="hs-user-pill">
           <div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div>
-          <span class="hs-uname">موظف</span>
+          <span class="hs-uname" data-i18n="employee">موظف</span>
         </div>
       </div>
     </header>
@@ -197,7 +197,7 @@ require_once 'connect.php';
               <i class="fas fa-compass"></i>
             </div>
             <div>
-              <h2 style="color:#fff;margin-bottom:4px;font-size:1.25rem">خدمة توصيات الأماكن القريبة</h2>
+              <h2 style="color:#fff;margin-bottom:4px;font-size:1.25rem" data-i18n="rec_hero_title">خدمة توصيات الأماكن القريبة</h2>
               <p style="color:rgba(255,255,255,.65);margin:0;font-size:.875rem">Hotel Nearby Recommendations — ابحث عن أفضل الأماكن للضيوف</p>
             </div>
           </div>
@@ -209,7 +209,7 @@ require_once 'connect.php';
         <div class="hs-card-hd">
           <div class="hs-card-title">
             <div class="hs-card-ic"><i class="fas fa-search"></i></div>
-            بحث عن أماكن قريبة
+            <span data-i18n="rec_search_title">بحث عن أماكن قريبة</span>
           </div>
         </div>
         <div class="hs-card-bd">
@@ -269,10 +269,10 @@ require_once 'connect.php';
             <!-- Search Button -->
             <div style="text-align:center;margin-top:8px">
               <button type="submit" class="hs-btn hs-btn-primary hs-btn-lg" id="searchBtn" disabled>
-                <i class="fas fa-search"></i> بحث عن الأماكن القريبة
+                <i class="fas fa-search"></i> <span data-i18n="rec_btn">بحث عن الأماكن القريبة</span>
               </button>
               <p style="color:var(--tx-3);font-size:.8rem;margin-top:10px;margin-bottom:0">
-                <i class="fas fa-info-circle"></i> يجب اختيار فئة للبحث. بيانات الضيف اختيارية.
+                <i class="fas fa-info-circle"></i> <span data-i18n="rec_search_info">يجب اختيار فئة للبحث. بيانات الضيف اختيارية.</span>
               </p>
             </div>
 

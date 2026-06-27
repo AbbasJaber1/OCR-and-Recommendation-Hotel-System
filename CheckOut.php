@@ -33,7 +33,7 @@ $result = $conn->query($sql);
       </div>
       <div class="hs-topbar-end">
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
-        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname">موظف</span></div>
+        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname" data-i18n="employee">موظف</span></div>
       </div>
     </header>
 
@@ -47,13 +47,14 @@ $result = $conn->query($sql);
             <div class="hs-card-ic"><i class="fas fa-sign-in-alt"></i></div>
             <span data-i18n="ci_title">تسجيل الوصول</span>
           </div>
-          <span class="hs-badge hs-badge-g"><i class="fas fa-users me-1"></i><?= $result->num_rows ?> موظف</span>
+          <span class="hs-badge hs-badge-g"><i class="fas fa-users me-1"></i><?= $result->num_rows ?> <span data-i18n="employee">موظف</span></span>
         </div>
         <div class="hs-card-bd">
           <form method="POST">
             <div class="hs-search-bar" style="max-width:520px">
               <i class="hs-search-ic fas fa-search"></i>
               <input class="hs-search-in" type="text" name="search"
+                     data-i18n="search_employee_ph" data-i18n-attr="placeholder"
                      placeholder="ابحث عن اسم الموظف..."
                      value="<?= htmlspecialchars($search) ?>">
             </div>
@@ -63,7 +64,7 @@ $result = $conn->query($sql);
               </button>
               <?php if($search): ?>
               <a href="CheckOut.php" class="hs-btn hs-btn-ghost hs-btn-sm">
-                <i class="fas fa-times"></i> مسح
+                <i class="fas fa-times"></i> <span data-i18n="clear">مسح</span>
               </a>
               <?php endif; ?>
             </div>
@@ -76,14 +77,14 @@ $result = $conn->query($sql);
         <div class="hs-card-hd">
           <div class="hs-card-title">
             <div class="hs-card-ic" style="background:#FEF2F2;color:#DC2626"><i class="fas fa-list"></i></div>
-            قائمة الموظفين
+            <span data-i18n="employees_list">قائمة الموظفين</span>
           </div>
         </div>
         <div class="hs-card-bd" style="padding:0">
           <?php if($result->num_rows === 0): ?>
             <div style="text-align:center;padding:48px 24px;color:var(--tx-3)">
               <i class="fas fa-users" style="font-size:3rem;margin-bottom:16px;display:block;opacity:.3"></i>
-              <p>لا توجد نتائج مطابقة</p>
+              <p data-i18n="no_match">لا توجد نتائج مطابقة</p>
             </div>
           <?php else: ?>
             <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
@@ -95,12 +96,12 @@ $result = $conn->query($sql);
                     </div>
                     <div>
                       <div style="font-weight:600;color:var(--tx-1)"><?= htmlspecialchars($row['guest_name']) ?></div>
-                      <div style="font-size:.78rem;color:var(--tx-3)">موظف</div>
+                      <div style="font-size:.78rem;color:var(--tx-3)" data-i18n="employee">موظف</div>
                     </div>
                   </div>
                   <button type="button" class="hs-btn hs-btn-primary hs-btn-sm"
                           onclick="startFaceRecognition('<?= htmlspecialchars($row['guest_name'], ENT_QUOTES) ?>', this)">
-                    <i class="fas fa-fingerprint"></i> تسجيل الوصول
+                    <i class="fas fa-fingerprint"></i> <span data-i18n="ci_title">تسجيل الوصول</span>
                   </button>
                 </div>
               <?php endwhile; ?>
@@ -127,7 +128,7 @@ $result = $conn->query($sql);
       <div class="modal-header" style="background:linear-gradient(135deg,var(--g-800),var(--g-700))">
         <h5 class="modal-title text-white" style="font-size:.9rem;font-weight:700">
           <i class="fas fa-camera me-2" style="color:var(--au-300)"></i>
-          تأكيد الهوية — التعرف على الوجه
+          <span data-i18n="face_id_confirm">تأكيد الهوية — التعرف على الوجه</span>
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="stopWebcam()"></button>
       </div>
@@ -165,7 +166,7 @@ function checkIn(logId) {
   xhr.onload = function() {
     if(xhr.status===200 && xhr.responseText.trim()==='Check-in successful') {
       CheckInS();
-      HsToast.success('تم تسجيل الوصول بنجاح');
+      HsToast.success(Lang.t('checkin_success'));
     }
   };
   xhr.send(`logId=${logId}`);

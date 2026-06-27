@@ -73,15 +73,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="hs-topbar-start">
         <button class="hs-mob-btn" id="mobMenuBtn"><i class="fas fa-bars"></i></button>
         <div>
-          <div class="hs-pg-title" data-i18n="rn_title">تسجيل موظف جديد</div>
-          <div class="hs-pg-sub" data-i18n="rn_sub">إضافة موظف جديد مع صوره لنظام التعرف على الوجه</div>
+          <div class="hs-pg-title" data-i18n="st_title">تسجيل موظف جديد</div>
+          <div class="hs-pg-sub" data-i18n="st_sub">إضافة موظف جديد مع صوره لنظام التعرف على الوجه</div>
         </div>
       </div>
       <div class="hs-topbar-end">
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
         <div class="hs-user-pill">
           <div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div>
-          <span class="hs-uname">مدير</span>
+          <span class="hs-uname" data-i18n="manager">مدير</span>
         </div>
       </div>
     </header>
@@ -102,32 +102,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="hs-card-hd">
             <div class="hs-card-title">
               <div class="hs-card-ic"><i class="fas fa-user-plus"></i></div>
-              <span data-i18n="rn_title">تسجيل موظف جديد</span>
+              <span data-i18n="st_title">تسجيل موظف جديد</span>
             </div>
           </div>
           <div class="hs-card-bd">
             <form method="POST" enctype="multipart/form-data">
 
               <div class="hs-form-g">
-                <label class="hs-lbl hs-lbl-req">الاسم الثلاثي</label>
+                <label class="hs-lbl hs-lbl-req" data-i18n="st_name">الاسم الثلاثي</label>
                 <input class="hs-input" type="text" name="guest_name"
+                       data-i18n="st_name_ph" data-i18n-attr="placeholder"
                        placeholder="ادخل الاسم الثلاثي"
                        value="<?= htmlspecialchars($guestName) ?>" required>
               </div>
 
               <div class="hs-form-g">
-                <label class="hs-lbl hs-lbl-req">الوظيفة</label>
+                <label class="hs-lbl hs-lbl-req" data-i18n="job_role">الوظيفة</label>
                 <input class="hs-input" type="text" name="role" id="role"
+                       data-i18n="job_role_ph" data-i18n-attr="placeholder"
                        placeholder="مثال: admin, chef, receptionist" required>
-                <p class="hs-help">الأدوار المتاحة: admin · chef · receptionist</p>
+                <p class="hs-help" data-i18n="job_role_help">الأدوار المتاحة: admin · chef · receptionist</p>
               </div>
 
               <div class="hs-form-g">
-                <label class="hs-lbl hs-lbl-req">صور الموظف (حتى 4 صور)</label>
+                <label class="hs-lbl hs-lbl-req" data-i18n="st_photos">صور الموظف (حتى 4 صور)</label>
                 <div class="hs-upload" id="uploadZone" role="button" tabindex="0">
                   <div class="hs-upload-ic"><i class="fas fa-camera"></i></div>
-                  <div style="font-size:.9rem;font-weight:600;color:var(--tx-2);margin-bottom:4px">اسحب الصور هنا أو انقر للاختيار</div>
-                  <div style="font-size:.8rem;color:var(--tx-3)">PNG أو JPG — حتى 4 صور للتعرف على الوجه</div>
+                  <div style="font-size:.9rem;font-weight:600;color:var(--tx-2);margin-bottom:4px" data-i18n="drag_drop_label">اسحب الصور هنا أو انقر للاختيار</div>
+                  <div style="font-size:.8rem;color:var(--tx-3)" data-i18n="drag_drop_sub">PNG أو JPG — حتى 4 صور للتعرف على الوجه</div>
                   <input type="file" id="guest_images" name="guest_images[]"
                          accept="image/*" multiple required style="display:none">
                 </div>
@@ -135,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </div>
 
               <button type="submit" class="hs-btn hs-btn-primary hs-btn-block">
-                <i class="fas fa-user-plus"></i> تسجيل الموظف
+                <i class="fas fa-user-plus"></i> <span data-i18n="register_staff_btn">تسجيل الموظف</span>
               </button>
             </form>
           </div>
@@ -148,16 +150,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="hs-card-hd">
               <div class="hs-card-title">
                 <div class="hs-card-ic" style="background:var(--au-50);color:var(--au-700)"><i class="fas fa-lightbulb"></i></div>
-                إرشادات التسجيل
+                <span data-i18n="reg_guidelines">إرشادات التسجيل</span>
               </div>
             </div>
             <div class="hs-card-bd">
               <ul style="padding-right:18px;color:var(--tx-2);font-size:.875rem;line-height:2.2;margin:0">
-                <li>التقط الصور من الأمام واليمين واليسار</li>
-                <li>تأكد من وضوح الوجه بلا إضاءة خلفية</li>
-                <li>تجنب النظارات أو أغطية الرأس في الصور</li>
-                <li>الإضاءة الجيدة ضرورية لدقة التعرف</li>
-                <li>الحد الأقصى 4 صور لكل موظف</li>
+                <li data-i18n="guideline_1">التقط الصور من الأمام واليمين واليسار</li>
+                <li data-i18n="guideline_2">تأكد من وضوح الوجه بلا إضاءة خلفية</li>
+                <li data-i18n="guideline_3">تجنب النظارات أو أغطية الرأس في الصور</li>
+                <li data-i18n="guideline_4">الإضاءة الجيدة ضرورية لدقة التعرف</li>
+                <li data-i18n="guideline_5">الحد الأقصى 4 صور لكل موظف</li>
               </ul>
             </div>
           </div>
@@ -166,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="hs-card-hd">
               <div class="hs-card-title">
                 <div class="hs-card-ic" style="background:#EFF6FF;color:#1D4ED8"><i class="fas fa-shield-alt"></i></div>
-                أمان البيانات
+                <span data-i18n="data_security">أمان البيانات</span>
               </div>
             </div>
             <div class="hs-card-bd">
@@ -180,22 +182,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="hs-card-hd">
               <div class="hs-card-title">
                 <div class="hs-card-ic"><i class="fas fa-users-cog"></i></div>
-                الأدوار في النظام
+                <span data-i18n="system_roles">الأدوار في النظام</span>
               </div>
             </div>
             <div class="hs-card-bd">
               <div style="display:flex;flex-direction:column;gap:12px">
                 <div style="display:flex;align-items:center;gap:10px">
                   <span class="hs-badge hs-badge-r">admin</span>
-                  <span style="font-size:.85rem;color:var(--tx-2)">صلاحيات كاملة للنظام</span>
+                  <span style="font-size:.85rem;color:var(--tx-2)" data-i18n="role_admin_desc">صلاحيات كاملة للنظام</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px">
                   <span class="hs-badge hs-badge-au">chef</span>
-                  <span style="font-size:.85rem;color:var(--tx-2)">طاقم المطبخ</span>
+                  <span style="font-size:.85rem;color:var(--tx-2)" data-i18n="role_chef_desc">طاقم المطبخ</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px">
                   <span class="hs-badge hs-badge-b">receptionist</span>
-                  <span style="font-size:.85rem;color:var(--tx-2)">موظف الاستقبال</span>
+                  <span style="font-size:.85rem;color:var(--tx-2)" data-i18n="role_receptionist_desc">موظف الاستقبال</span>
                 </div>
               </div>
             </div>

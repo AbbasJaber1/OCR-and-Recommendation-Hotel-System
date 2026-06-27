@@ -74,7 +74,7 @@ $roomsResult = $conn->query("SELECT room_number FROM rooms ORDER BY room_number"
       </div>
       <div class="hs-topbar-end">
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
-        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname">مدير</span></div>
+        <div class="hs-user-pill"><div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div><span class="hs-uname" data-i18n="manager">مدير</span></div>
       </div>
     </header>
 
@@ -97,16 +97,17 @@ $roomsResult = $conn->query("SELECT room_number FROM rooms ORDER BY room_number"
             <div class="hs-card-hd">
               <div class="hs-card-title">
                 <div class="hs-card-ic"><i class="fas fa-search"></i></div>
-                بحث عن موظف
+                <span data-i18n="search_employee">بحث عن موظف</span>
               </div>
             </div>
             <div class="hs-card-bd">
               <form method="POST">
                 <div class="hs-form-g">
-                  <label class="hs-lbl" data-i18n="search">اسم الموظف</label>
+                  <label class="hs-lbl" data-i18n="employee_name">اسم الموظف</label>
                   <div class="hs-search-bar">
                     <i class="hs-search-ic fas fa-search"></i>
                     <input class="hs-search-in" type="text" name="search"
+                           data-i18n="search_name_short_ph" data-i18n-attr="placeholder"
                            placeholder="ابحث عن اسم..."
                            value="<?= htmlspecialchars($search) ?>">
                   </div>
@@ -129,7 +130,7 @@ $roomsResult = $conn->query("SELECT room_number FROM rooms ORDER BY room_number"
                     </div>
                     <div>
                       <div style="font-weight:700;color:var(--tx-1)"><?= htmlspecialchars($guest['guest_name']) ?></div>
-                      <div style="font-size:.78rem;color:var(--tx-3)"><?= htmlspecialchars($guest['role'] ?? 'موظف') ?></div>
+                      <div style="font-size:.78rem;color:var(--tx-3)"><?= htmlspecialchars($guest['role'] ?? 'employee') ?></div>
                     </div>
                   </div>
                 </div>
@@ -154,7 +155,7 @@ $roomsResult = $conn->query("SELECT room_number FROM rooms ORDER BY room_number"
                         <i class="fas fa-save"></i> <span data-i18n="upd_room">تحديث الغرفة</span>
                       </button>
                       <button type="submit" name="remove_guest" class="hs-btn hs-btn-danger hs-btn-sm"
-                              onclick="return confirm('هل تريد حذف هذا الموظف؟')">
+                              onclick="return confirm(Lang.t('confirm_delete_employee'))">
                         <i class="fas fa-trash-alt"></i> <span data-i18n="rm_guest">حذف الموظف</span>
                       </button>
                     </div>
@@ -183,11 +184,12 @@ $roomsResult = $conn->query("SELECT room_number FROM rooms ORDER BY room_number"
               </div>
             </div>
             <div class="hs-card-bd">
-              <p style="color:var(--tx-3);font-size:.875rem;margin-bottom:20px">أضف رقم غرفة جديدة إلى النظام</p>
+              <p style="color:var(--tx-3);font-size:.875rem;margin-bottom:20px" data-i18n="add_room_desc">أضف رقم غرفة جديدة إلى النظام</p>
               <form method="POST">
                 <div class="hs-form-g">
                   <label class="hs-lbl hs-lbl-req" data-i18n="room_no">رقم الغرفة</label>
                   <input type="number" name="room_number" class="hs-input"
+                         data-i18n="room_example_ph" data-i18n-attr="placeholder"
                          placeholder="مثال: 101" min="1" required>
                 </div>
                 <button type="submit" name="add_room" class="hs-btn hs-btn-primary hs-btn-block">
@@ -197,7 +199,7 @@ $roomsResult = $conn->query("SELECT room_number FROM rooms ORDER BY room_number"
 
               <!-- Rooms overview -->
               <div class="hs-divider"></div>
-              <div style="font-size:.85rem;font-weight:600;color:var(--tx-2);margin-bottom:12px">الغرف المسجلة</div>
+              <div style="font-size:.85rem;font-weight:600;color:var(--tx-2);margin-bottom:12px" data-i18n="registered_rooms">الغرف المسجلة</div>
               <div style="display:flex;flex-wrap:wrap;gap:8px">
                 <?php
                 $roomsResult->data_seek(0);

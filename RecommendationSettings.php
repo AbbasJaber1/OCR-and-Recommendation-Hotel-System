@@ -55,7 +55,7 @@ require_once 'connect.php';
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
         <div class="hs-user-pill">
           <div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div>
-          <span class="hs-uname">مدير</span>
+          <span class="hs-uname" data-i18n="manager">مدير</span>
         </div>
       </div>
     </header>
@@ -71,7 +71,7 @@ require_once 'connect.php';
                 <i class="fas fa-map-marker-alt"></i>
               </div>
               <div>
-                <h2 style="color:#fff;margin-bottom:4px;font-size:1.15rem">إعدادات موقع الفندق</h2>
+                <h2 style="color:#fff;margin-bottom:4px;font-size:1.15rem" data-i18n="set_hero_title">إعدادات موقع الفندق</h2>
                 <p style="color:rgba(255,255,255,.65);margin:0;font-size:.85rem">Hotel Location Settings — Recommendation Service</p>
               </div>
             </div>
@@ -86,16 +86,17 @@ require_once 'connect.php';
           <div class="hs-card-hd">
             <div class="hs-card-title">
               <div class="hs-card-ic"><i class="fas fa-map"></i></div>
-              حدد موقع الفندق على الخريطة
+              <span data-i18n="map_select_title">حدد موقع الفندق على الخريطة</span>
             </div>
           </div>
           <div class="hs-card-bd">
             <!-- Address Search -->
             <div class="hs-form-g">
-              <label class="hs-lbl">بحث بالعنوان</label>
+              <label class="hs-lbl" data-i18n="address_search">بحث بالعنوان</label>
               <div class="search-box">
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchInput" class="hs-input"
+                       data-i18n="address_ph" data-i18n-attr="placeholder"
                        placeholder="ابحث عن عنوان أو مكان...">
               </div>
             </div>
@@ -123,20 +124,20 @@ require_once 'connect.php';
             <div class="hs-card-hd">
               <div class="hs-card-title">
                 <div class="hs-card-ic"><i class="fas fa-cog"></i></div>
-                معلومات الموقع
+                <span data-i18n="location_info">معلومات الموقع</span>
               </div>
             </div>
             <div class="hs-card-bd">
               <form id="locationForm">
 
                 <div class="hs-form-g">
-                  <label class="hs-lbl">خط العرض (Latitude)</label>
+                  <label class="hs-lbl" data-i18n="latitude_label">خط العرض (Latitude)</label>
                   <input type="text" id="latitude" name="latitude"
                          class="hs-input coord-display" readonly placeholder="0.00000000">
                 </div>
 
                 <div class="hs-form-g">
-                  <label class="hs-lbl">خط الطول (Longitude)</label>
+                  <label class="hs-lbl" data-i18n="longitude_label">خط الطول (Longitude)</label>
                   <input type="text" id="longitude" name="longitude"
                          class="hs-input coord-display" readonly placeholder="0.00000000">
                 </div>
@@ -144,19 +145,20 @@ require_once 'connect.php';
                 <div class="hs-divider"></div>
 
                 <div class="hs-form-g">
-                  <label class="hs-lbl">اسم / وصف الموقع (اختياري)</label>
+                  <label class="hs-lbl" data-i18n="location_label_opt">اسم / وصف الموقع (اختياري)</label>
                   <input type="text" id="label" name="label"
-                         class="hs-input" placeholder="مثال: فندق العتبة المقدسة">
+                         class="hs-input" data-i18n="location_label_ph" data-i18n-attr="placeholder"
+                         placeholder="مثال: فندق العتبة المقدسة">
                 </div>
 
                 <!-- Last Updated Info -->
                 <div style="padding:14px;background:var(--s-2);border-radius:var(--r-md);margin-bottom:20px;font-size:.82rem;color:var(--tx-2)">
-                  <div style="margin-bottom:4px"><strong>آخر تحديث:</strong> <span id="lastUpdated">-</span></div>
-                  <div><strong>بواسطة:</strong> <span id="updatedBy">-</span></div>
+                  <div style="margin-bottom:4px"><strong data-i18n="last_updated">آخر تحديث:</strong> <span id="lastUpdated">-</span></div>
+                  <div><strong data-i18n="updated_by">بواسطة:</strong> <span id="updatedBy">-</span></div>
                 </div>
 
                 <button type="submit" class="hs-btn hs-btn-primary hs-btn-block" id="saveBtn">
-                  <i class="fas fa-save"></i> حفظ الموقع
+                  <i class="fas fa-save"></i> <span data-i18n="set_save">حفظ الموقع</span>
                 </button>
 
               </form>
@@ -168,15 +170,15 @@ require_once 'connect.php';
             <div class="hs-card-hd">
               <div class="hs-card-title">
                 <div class="hs-card-ic" style="background:var(--au-50);color:var(--au-700)"><i class="fas fa-bolt"></i></div>
-                إجراءات سريعة
+                <span data-i18n="quick_actions">إجراءات سريعة</span>
               </div>
             </div>
             <div class="hs-card-bd" style="display:flex;flex-direction:column;gap:10px">
               <button class="hs-btn hs-btn-sec hs-btn-block" onclick="getCurrentLocation()">
-                <i class="fas fa-crosshairs"></i> استخدم موقعي الحالي
+                <i class="fas fa-crosshairs"></i> <span data-i18n="set_cur">استخدم موقعي الحالي</span>
               </button>
               <a href="RecommendationService.php" class="hs-btn hs-btn-ghost hs-btn-block">
-                <i class="fas fa-compass"></i> خدمة التوصيات
+                <i class="fas fa-compass"></i> <span data-i18n="rec_service">خدمة التوصيات</span>
               </a>
             </div>
           </div>
