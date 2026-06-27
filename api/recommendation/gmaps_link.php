@@ -1,7 +1,6 @@
 <?php
 /**
- * Google Maps Link Generator API
- * Generates directions URL from hotel to destination
+ * Directions Link Generator — OpenStreetMap OSRM routing
  */
 
 header('Content-Type: application/json');
@@ -9,11 +8,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Method not allowed']);
@@ -21,69 +16,42 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-
 if (json_last_error() !== JSON_ERROR_NONE) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid JSON input']);
+    echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
     exit;
 }
 
-// Validate required fields
-$required = ['hotelLat', 'hotelLng', 'destinationLat', 'destinationLng'];
-foreach ($required as $field) {
-    if (!isset($input[$field])) {
+foreach (['hotelLat', 'hotelLng', 'destinationLat', 'destinationLng'] as $f) {
+    if (!isset($input[$f])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => "Missing required field: $field"]);
+        echo json_encode(['success' => false, 'error' => "Missing: $f"]);
         exit;
     }
 }
 
-$hotelLat = (float)$input['hotelLat'];
-$hotelLng = (float)$input['hotelLng'];
-$destLat = (float)$input['destinationLat'];
-$destLng = (float)$input['destinationLng'];
-$placeName = $input['placeName'] ?? '';
+$oLat = (float)$input['hotelLat'];
+$oLng = (float)$input['hotelLng'];
+$dLat = (float)$input['destinationLat'];
+$dLng = (float)$input['destinationLng'];
+$name = $input['placeName'] ?? '';
 
-// Validate coordinates
-if ($hotelLat < -90 || $hotelLat > 90 || $destLat < -90 || $destLat > 90) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid latitude']);
-    exit;
-}
+// OSM routing directions
+$directionsUrl = "https://www.openstreetmap.org/directions"
+    . "?engine=fossgis_osrm_car"
+    . "&route=$oLat,$oLng;$dLat,$dLng";
 
-if ($hotelLng < -180 || $hotelLng > 180 || $destLng < -180 || $destLng > 180) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid longitude']);
-    exit;
-}
-
-// Generate Google Maps directions URL
-$directionsUrl = "https://www.google.com/maps/dir/?api=1" .
-    "&origin=" . urlencode("$hotelLat,$hotelLng") .
-    "&destination=" . urlencode("$destLat,$destLng") .
-    "&travelmode=driving";
-
-// Alternative: Deep link for mobile apps
-$mobileUrl = "https://maps.google.com/maps?saddr=$hotelLat,$hotelLng&daddr=$destLat,$destLng";
-
-// Generate simple location URL (just the destination)
-$placeUrl = "https://www.google.com/maps/search/?api=1&query=$destLat,$destLng";
+// Destination pin on OSM
+$placeUrl = "https://www.openstreetmap.org/?mlat=$dLat&mlon=$dLng&zoom=17";
 
 echo json_encode([
     'success' => true,
-    'data' => [
+    'data'    => [
         'directionsUrl' => $directionsUrl,
-        'mobileUrl' => $mobileUrl,
-        'placeUrl' => $placeUrl,
-        'placeName' => $placeName,
-        'origin' => [
-            'lat' => $hotelLat,
-            'lng' => $hotelLng
-        ],
-        'destination' => [
-            'lat' => $destLat,
-            'lng' => $destLng
-        ]
+        'placeUrl'      => $placeUrl,
+        'placeName'     => $name,
+        'origin'        => ['lat' => $oLat, 'lng' => $oLng],
+        'destination'   => ['lat' => $dLat, 'lng' => $dLng]
     ]
 ]);
 ?>

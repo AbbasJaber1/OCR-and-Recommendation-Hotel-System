@@ -13,24 +13,18 @@ require_once 'connect.php';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>إعدادات التوصيات — الفندق</title>
   <?php include 'includes/head.php'; ?>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     #map {
       height: 480px;
       width: 100%;
       border-radius: var(--r-lg);
       border: 1.5px solid var(--bd-2);
+      z-index: 0;
     }
     .coord-display { font-family: monospace; font-size: 1.05rem; }
     .status-badge { font-size: .88rem; padding: 8px 14px; }
-    .search-box { position: relative; }
-    .search-box .hs-input { padding-right: 44px; }
-    body.lang-en .search-box .hs-input { padding-right: 14px; padding-left: 44px; }
-    .search-box i {
-      position: absolute; top: 50%; right: 14px;
-      transform: translateY(-50%);
-      color: var(--tx-3); pointer-events: none;
-    }
-    body.lang-en .search-box i { right: auto; left: 14px; }
+    .leaflet-attribution-flag { display: none !important; }
   </style>
 </head>
 <body>
@@ -93,12 +87,15 @@ require_once 'connect.php';
             <!-- Address Search -->
             <div class="hs-form-g">
               <label class="hs-lbl" data-i18n="address_search">بحث بالعنوان</label>
-              <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" class="hs-input"
+              <div style="display:flex;gap:8px">
+                <input type="text" id="searchInput" class="hs-input" style="flex:1"
                        data-i18n="address_ph" data-i18n-attr="placeholder"
                        placeholder="ابحث عن عنوان أو مكان...">
+                <button type="button" class="hs-btn hs-btn-primary hs-btn-sm" id="searchAddrBtn" style="flex-shrink:0">
+                  <i class="fas fa-search"></i>
+                </button>
               </div>
+              <div id="nominatimResults" style="display:none;margin-top:6px;border:1px solid var(--bd-2);border-radius:var(--r-md);background:var(--s-0);max-height:200px;overflow-y:auto;box-shadow:var(--sh-md);z-index:1000;position:relative"></div>
             </div>
 
             <!-- Map -->
@@ -203,256 +200,216 @@ require_once 'connect.php';
 
 <div class="hs-toast-ctr"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-let map, marker, geocoder, searchBox;
+let map, marker;
 let currentLocation = { lat: 33.3152, lng: 44.3661 }; // Default: Baghdad
 
-// Initialize
-document.addEventListener('DOMContentLoaded', async function() {
-    await loadMapsAPI();
+// ── Init ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+    initMap();
     loadCurrentLocation();
+    setupSearch();
+
+    document.getElementById('locationForm').addEventListener('submit', saveLocation);
 });
 
-// Load Google Maps API dynamically
-async function loadMapsAPI() {
-    try {
-        const response = await fetch('api/recommendation/maps_config.php');
-        const data = await response.json();
+function initMap() {
+    map = L.map('map').setView([currentLocation.lat, currentLocation.lng], 15);
 
-        if (!data.success || !data.data.configured) {
-            showToast('خطأ', 'مفتاح Google Maps API غير مُعد. يرجى تكوينه في ملف .env', 'danger');
-            document.getElementById('map').innerHTML = `
-                <div class="d-flex align-items-center justify-content-center h-100 bg-light" style="height:480px;border-radius:var(--r-lg)">
-                    <div class="text-center">
-                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                        <h5>Google Maps API غير مُعد</h5>
-                        <p class="text-muted">يرجى إضافة GOOGLE_MAPS_API_KEY في ملف .env</p>
-                    </div>
-                </div>
-            `;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+    }).addTo(map);
+
+    const hotelIcon = L.divIcon({
+        className: '',
+        html: `<div style="background:linear-gradient(135deg,var(--g-600),var(--g-800));color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.35)"><i class="fas fa-hotel"></i></div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
+    });
+
+    marker = L.marker([currentLocation.lat, currentLocation.lng], {
+        draggable: true,
+        icon: hotelIcon
+    }).addTo(map);
+
+    marker.on('dragend', function() {
+        const p = marker.getLatLng();
+        updateCoordinates(p.lat, p.lng);
+    });
+
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        updateCoordinates(e.latlng.lat, e.latlng.lng);
+    });
+}
+
+function updateCoordinates(lat, lng) {
+    document.getElementById('latitude').value  = lat.toFixed(8);
+    document.getElementById('longitude').value = lng.toFixed(8);
+}
+
+// ── Nominatim address search ──────────────────────────────────────────────
+function setupSearch() {
+    const btn   = document.getElementById('searchAddrBtn');
+    const input = document.getElementById('searchInput');
+
+    btn.addEventListener('click', () => geocodeAddress());
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); geocodeAddress(); }
+    });
+
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#nominatimResults') && !e.target.closest('#searchInput')) {
+            document.getElementById('nominatimResults').style.display = 'none';
+        }
+    });
+}
+
+async function geocodeAddress() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) return;
+
+    const resultsBox = document.getElementById('nominatimResults');
+    resultsBox.innerHTML = '<div style="padding:10px;color:var(--tx-3);font-size:.85rem">جاري البحث...</div>';
+    resultsBox.style.display = 'block';
+
+    try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&accept-language=ar,en`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (!data.length) {
+            resultsBox.innerHTML = '<div style="padding:10px;color:var(--tx-3);font-size:.85rem">لم يتم العثور على نتائج</div>';
             return;
         }
 
-        // Load Google Maps script
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${data.data.apiKey}&libraries=places&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-
-    } catch (error) {
-        console.error('Failed to load Maps API:', error);
-        showToast('خطأ', 'فشل في تحميل Google Maps', 'danger');
+        resultsBox.innerHTML = data.map((item, i) => `
+            <div onclick="selectAddress(${parseFloat(item.lat)}, ${parseFloat(item.lon)}, '${item.display_name.replace(/'/g,"&#39;")}')"
+                 style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--bd-1);font-size:.85rem;transition:var(--tf)"
+                 onmouseover="this.style.background='var(--g-25)'" onmouseout="this.style.background=''">
+                <i class="fas fa-map-marker-alt" style="color:var(--g-600);margin-left:6px"></i>
+                ${item.display_name}
+            </div>
+        `).join('');
+    } catch (err) {
+        resultsBox.innerHTML = '<div style="padding:10px;color:#DC2626;font-size:.85rem">فشل في الاتصال بخدمة البحث</div>';
     }
 }
 
-// Initialize map (called by Google Maps callback)
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: currentLocation,
-        zoom: 15,
-        mapTypeControl: true,
-        streetViewControl: false
-    });
+function selectAddress(lat, lng, displayName) {
+    document.getElementById('nominatimResults').style.display = 'none';
+    document.getElementById('searchInput').value = displayName;
 
-    // Create draggable marker
-    marker = new google.maps.Marker({
-        position: currentLocation,
-        map: map,
-        draggable: true,
-        animation: google.maps.Animation.DROP,
-        title: 'موقع الفندق'
-    });
-
-    // Geocoder for address search
-    geocoder = new google.maps.Geocoder();
-
-    // Search box
-    const input = document.getElementById('searchInput');
-    searchBox = new google.maps.places.SearchBox(input);
-
-    // Bias search results to map viewport
-    map.addListener('bounds_changed', () => {
-        searchBox.setBounds(map.getBounds());
-    });
-
-    // Handle search results
-    searchBox.addListener('places_changed', () => {
-        const places = searchBox.getPlaces();
-        if (places.length === 0) return;
-
-        const place = places[0];
-        if (!place.geometry || !place.geometry.location) return;
-
-        map.setCenter(place.geometry.location);
-        map.setZoom(17);
-        marker.setPosition(place.geometry.location);
-        updateCoordinates(place.geometry.location);
-    });
-
-    // Click on map to move marker
-    map.addListener('click', (e) => {
-        marker.setPosition(e.latLng);
-        updateCoordinates(e.latLng);
-    });
-
-    // Drag marker
-    marker.addListener('dragend', () => {
-        updateCoordinates(marker.getPosition());
-    });
+    map.setView([lat, lng], 17);
+    marker.setLatLng([lat, lng]);
+    updateCoordinates(lat, lng);
 }
 
-// Update coordinate inputs
-function updateCoordinates(latLng) {
-    document.getElementById('latitude').value = latLng.lat().toFixed(8);
-    document.getElementById('longitude').value = latLng.lng().toFixed(8);
-}
-
-// Load current saved location
+// ── Load saved location ───────────────────────────────────────────────────
 async function loadCurrentLocation() {
     try {
-        const response = await fetch('api/recommendation/hotel_location.php');
-        const data = await response.json();
+        const resp = await fetch('api/recommendation/hotel_location.php');
+        const data = await resp.json();
 
-        if (data.success && data.data) {
+        if (data.success && data.data && data.data.isConfigured) {
             const loc = data.data;
+            currentLocation = { lat: loc.latitude, lng: loc.longitude };
 
-            if (loc.isConfigured) {
-                currentLocation = { lat: loc.latitude, lng: loc.longitude };
+            document.getElementById('latitude').value  = loc.latitude.toFixed(8);
+            document.getElementById('longitude').value = loc.longitude.toFixed(8);
+            document.getElementById('label').value     = loc.label || '';
+            document.getElementById('lastUpdated').textContent = loc.updatedAt || '-';
+            document.getElementById('updatedBy').textContent   = loc.updatedBy || '-';
 
-                document.getElementById('latitude').value = loc.latitude.toFixed(8);
-                document.getElementById('longitude').value = loc.longitude.toFixed(8);
-                document.getElementById('label').value = loc.label || '';
-                document.getElementById('lastUpdated').textContent = loc.updatedAt || '-';
-                document.getElementById('updatedBy').textContent = loc.updatedBy || '-';
-
-                // Update map if already initialized
-                if (map && marker) {
-                    map.setCenter(currentLocation);
-                    marker.setPosition(currentLocation);
-                }
-
-                updateStatusBadge(true);
-            } else {
-                updateStatusBadge(false);
-            }
+            map.setView([loc.latitude, loc.longitude], 15);
+            marker.setLatLng([loc.latitude, loc.longitude]);
+            updateStatusBadge(true);
+        } else {
+            updateStatusBadge(false);
         }
-    } catch (error) {
-        console.error('Failed to load location:', error);
+    } catch (err) {
+        console.error('loadCurrentLocation:', err);
     }
 }
 
-// Update status badge
-function updateStatusBadge(isConfigured) {
-    const badge = document.getElementById('statusBadge');
-    if (isConfigured) {
-        badge.innerHTML = `
-            <span class="badge bg-success status-badge">
-                <i class="fas fa-check-circle me-1"></i> الموقع مُعد
-            </span>
-        `;
-    } else {
-        badge.innerHTML = `
-            <span class="badge bg-warning status-badge">
-                <i class="fas fa-exclamation-triangle me-1"></i> غير مُعد
-            </span>
-        `;
-    }
-}
-
-// Get current GPS location
+// ── GPS ───────────────────────────────────────────────────────────────────
 function getCurrentLocation() {
     if (!navigator.geolocation) {
         showToast('خطأ', 'المتصفح لا يدعم تحديد الموقع', 'warning');
         return;
     }
-
     navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-
-            if (map && marker) {
-                map.setCenter(pos);
-                map.setZoom(17);
-                marker.setPosition(pos);
-            }
-
-            updateCoordinates(new google.maps.LatLng(pos.lat, pos.lng));
+        pos => {
+            const lat = pos.coords.latitude, lng = pos.coords.longitude;
+            map.setView([lat, lng], 17);
+            marker.setLatLng([lat, lng]);
+            updateCoordinates(lat, lng);
             showToast('نجاح', 'تم تحديد موقعك الحالي', 'success');
         },
-        (error) => {
-            showToast('خطأ', 'فشل في تحديد الموقع: ' + error.message, 'danger');
-        }
+        err => showToast('خطأ', 'فشل في تحديد الموقع: ' + err.message, 'danger')
     );
 }
 
-// Save location
-document.getElementById('locationForm').addEventListener('submit', async function(e) {
+// ── Save ──────────────────────────────────────────────────────────────────
+async function saveLocation(e) {
     e.preventDefault();
-
-    const lat = parseFloat(document.getElementById('latitude').value);
-    const lng = parseFloat(document.getElementById('longitude').value);
+    const lat   = parseFloat(document.getElementById('latitude').value);
+    const lng   = parseFloat(document.getElementById('longitude').value);
     const label = document.getElementById('label').value.trim();
 
     if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
-        showToast('خطأ', 'يرجى تحديد موقع صالح على الخريطة', 'warning');
+        showToast('خطأ', 'يرجى تحديد موقع على الخريطة أولاً', 'warning');
         return;
     }
 
-    const saveBtn = document.getElementById('saveBtn');
-    saveBtn.disabled = true;
-    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري الحفظ...';
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري الحفظ...';
 
     try {
-        const response = await fetch('api/recommendation/hotel_location.php', {
+        const resp = await fetch('api/recommendation/hotel_location.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                latitude: lat,
-                longitude: lng,
-                label: label,
-                updatedBy: 'Admin'
-            })
+            body: JSON.stringify({ latitude: lat, longitude: lng, label, updatedBy: 'Admin' })
         });
-
-        const data = await response.json();
+        const data = await resp.json();
 
         if (data.success) {
             showToast('نجاح', 'تم حفظ موقع الفندق بنجاح', 'success');
             updateStatusBadge(true);
             document.getElementById('lastUpdated').textContent = new Date().toLocaleString('ar-IQ');
-            document.getElementById('updatedBy').textContent = 'Admin';
+            document.getElementById('updatedBy').textContent   = 'Admin';
         } else {
             showToast('خطأ', data.error || 'فشل في حفظ الموقع', 'danger');
         }
-    } catch (error) {
-        console.error('Save failed:', error);
+    } catch (err) {
         showToast('خطأ', 'حدث خطأ في الاتصال', 'danger');
     } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i class="fas fa-save"></i> حفظ الموقع';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> <span data-i18n="set_save">حفظ الموقع</span>';
+        Lang.apply();
     }
-});
+}
 
-// Show toast notification
+// ── Status badge ──────────────────────────────────────────────────────────
+function updateStatusBadge(ok) {
+    document.getElementById('statusBadge').innerHTML = ok
+        ? `<span class="badge bg-success status-badge"><i class="fas fa-check-circle me-1"></i> الموقع مُعد</span>`
+        : `<span class="badge bg-warning status-badge"><i class="fas fa-exclamation-triangle me-1"></i> غير مُعد</span>`;
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
 function showToast(title, message, type = 'info') {
     const toast = document.getElementById('toast');
-    const toastTitle = document.getElementById('toastTitle');
-    const toastMessage = document.getElementById('toastMessage');
-
-    toastTitle.textContent = title;
-    toastMessage.textContent = message;
-
+    document.getElementById('toastTitle').textContent   = title;
+    document.getElementById('toastMessage').textContent = message;
     toast.className = 'toast';
     if (type === 'success') toast.classList.add('border-success');
-    else if (type === 'danger') toast.classList.add('border-danger');
+    else if (type === 'danger')  toast.classList.add('border-danger');
     else if (type === 'warning') toast.classList.add('border-warning');
-
-    const bsToast = new bootstrap.Toast(toast);
-    bsToast.show();
+    new bootstrap.Toast(toast).show();
 }
 </script>
 
