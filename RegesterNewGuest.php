@@ -117,14 +117,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       let file = fileInput.files[0];
 
       if (!file) {
-        alert("Please select an image first.");
+        HsToast.error(Lang.t('please_select_image'));
         return;
       }
 
       let formData = new FormData();
       formData.append("image", file);
 
-      document.getElementById('status').innerText = "Processing OCR...";
+      document.getElementById('status').innerText = Lang.t('processing_ocr');
 
       let response = await fetch("process_ocr.php", {
         method: "POST",
@@ -132,10 +132,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       });
 
       let result = await response.json();
-      document.getElementById('status').innerText = "OCR Completed!";
+      document.getElementById('status').innerText = Lang.t('ocr_completed');
 
       if (result.error) {
-        document.getElementById('status').innerText = "Error: " + result.error;
+        document.getElementById('status').innerText = Lang.t('error_message') + ": " + result.error;
         return;
       }
 
@@ -161,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       document.getElementById('full_name').value = document.getElementById('first_name').value + ' ' + document.getElementById('last_name').value;
       document.getElementById('passport_form').submit();
       console.log("Form Submitted with Data:", data);
-      alert("Data has been submitted successfully! (Check console for details)");
+      HsToast.success(Lang.t('data_submitted'));
     }
 
     let videoStream;
@@ -178,7 +178,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         })
         .catch(error => {
           console.error("Error accessing webcam:", error);
-          alert("Could not access webcam.");
+          HsToast.error(Lang.t('webcam_error'));
         });
     }
 
@@ -235,10 +235,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             data: { floor: floor },
             success: function(response) {
               $('#room_number').html(response);
+              Lang.apply();
             }
           });
         } else {
-          $('#room_number').html('<option value="">اختر الغرفة</option>');
+          $('#room_number').html('<option value="" data-i18n="select_room">اختر الغرفة</option>');
+          Lang.apply();
         }
       });
     });
@@ -255,8 +257,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <video id="video" autoplay></video>
       </div>
       <div id="button-container">
-        <button id="capture" onclick="captureImage()"><i class="fas fa-camera"></i> التقاط</button>
-        <button id="close-popup" onclick="closeWebcam()"><i class="fas fa-times"></i> إغلاق</button>
+        <button id="capture" onclick="captureImage()"><i class="fas fa-camera"></i> <span data-i18n="capture_btn">التقاط</span></button>
+        <button id="close-popup" onclick="closeWebcam()"><i class="fas fa-times"></i> <span data-i18n="close_btn">إغلاق</span></button>
       </div>
     </div>
   </div>
@@ -289,7 +291,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="hs-card-hd">
               <div class="hs-card-title">
                 <div class="hs-card-ic" style="background:#0D1B0D;color:var(--g-300)"><i class="fas fa-passport"></i></div>
-                ماسح جواز السفر
+                <span data-i18n="passport_scanner">ماسح جواز السفر</span>
               </div>
               <span class="hs-badge hs-badge-au"><i class="fas fa-magic"></i> OCR</span>
             </div>
@@ -305,7 +307,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="hs-ocr-corner hs-ocr-c-br"></div>
                 <div style="text-align:center;z-index:1;padding:16px">
                   <div style="font-size:2rem;color:var(--g-300);margin-bottom:6px;opacity:.45"><i class="fas fa-passport"></i></div>
-                  <div style="color:rgba(255,255,255,.45);font-size:.8rem">منطقة المسح الضوئي MRZ</div>
+                  <div style="color:rgba(255,255,255,.45);font-size:.8rem" data-i18n="mrz_area">منطقة المسح الضوئي MRZ</div>
                 </div>
               </div>
 
@@ -314,24 +316,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    onclick="document.getElementById('upload').click()"
                    style="padding:22px;margin-bottom:14px">
                 <div class="hs-upload-ic" style="width:40px;height:40px;font-size:17px;margin-bottom:8px"><i class="fas fa-cloud-upload-alt"></i></div>
-                <div style="font-size:.875rem;font-weight:600;color:var(--tx-2);margin-bottom:3px">رفع صورة جواز السفر</div>
-                <div style="font-size:.78rem;color:var(--tx-3)">PNG أو JPG</div>
+                <div style="font-size:.875rem;font-weight:600;color:var(--tx-2);margin-bottom:3px" data-i18n="upload_passport">رفع صورة جواز السفر</div>
+                <div style="font-size:.78rem;color:var(--tx-3)" data-i18n="png_jpg">PNG أو JPG</div>
                 <input type="file" id="upload" accept="image/*" style="display:none">
               </div>
 
               <!-- Status -->
               <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-md);background:var(--s-2);border:1px solid var(--bd-1);margin-bottom:16px">
                 <i class="fas fa-circle-notch" style="color:var(--g-600)"></i>
-                <span id="status" style="font-size:.85rem;color:var(--tx-2)">جاهز لمسح الجواز...</span>
+                <span id="status" style="font-size:.85rem;color:var(--tx-2)" data-i18n="ready_scan">جاهز لمسح الجواز...</span>
               </div>
 
               <!-- Action buttons -->
               <div style="display:flex;flex-direction:column;gap:10px">
                 <button type="button" class="hs-btn hs-btn-primary hs-btn-block" onclick="uploadImage()">
-                  <i class="fas fa-magic"></i> مسح جواز السفر
+                  <i class="fas fa-magic"></i> <span data-i18n="scan_passport">مسح جواز السفر</span>
                 </button>
                 <button type="button" class="hs-btn hs-btn-sec hs-btn-block" onclick="openWebcam()">
-                  <i class="fas fa-video"></i> التقاط عبر الكاميرا
+                  <i class="fas fa-video"></i> <span data-i18n="capture_camera">التقاط عبر الكاميرا</span>
                 </button>
               </div>
 
@@ -348,9 +350,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <div class="hs-card-hd">
             <div class="hs-card-title">
               <div class="hs-card-ic"><i class="fas fa-id-card"></i></div>
-              بيانات جواز السفر
+              <span data-i18n="passport_data">بيانات جواز السفر</span>
             </div>
-            <span class="hs-badge hs-badge-g"><i class="fas fa-edit"></i> قابل للتعديل</span>
+            <span class="hs-badge hs-badge-g"><i class="fas fa-edit"></i> <span data-i18n="editable">قابل للتعديل</span></span>
           </div>
           <div class="hs-card-bd">
 
@@ -359,42 +361,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
               <div class="hs-g2" style="gap:14px">
                 <div class="hs-form-g">
-                  <label class="hs-lbl hs-lbl-req">الاسم الكريم</label>
+                  <label class="hs-lbl hs-lbl-req" data-i18n="full_name_title">الاسم الكريم</label>
                   <input class="hs-input" type="text" id="first_name" placeholder="الاسم الأول" required>
                 </div>
                 <div class="hs-form-g">
-                  <label class="hs-lbl hs-lbl-req">اسم العائلة</label>
+                  <label class="hs-lbl hs-lbl-req" data-i18n="family_name">اسم العائلة</label>
                   <input class="hs-input" type="text" id="last_name" placeholder="اسم العائلة" required>
                 </div>
               </div>
 
               <div class="hs-form-g">
-                <label class="hs-lbl hs-lbl-req">الجنسية</label>
+                <label class="hs-lbl hs-lbl-req" data-i18n="nationality_label">الجنسية</label>
                 <input class="hs-input" type="text" name="nationality" id="nationality"
                        placeholder="ادخل الجنسية" required>
               </div>
 
               <div class="hs-g2" style="gap:14px">
                 <div class="hs-form-g">
-                  <label class="hs-lbl hs-lbl-req">تاريخ الولادة</label>
+                  <label class="hs-lbl hs-lbl-req" data-i18n="birthdate_label">تاريخ الولادة</label>
                   <input class="hs-input" type="text" name="birth_date" id="dob"
                          placeholder="YYYY-MM-DD" required>
                 </div>
                 <div class="hs-form-g">
-                  <label class="hs-lbl hs-lbl-req">الجنس</label>
+                  <label class="hs-lbl hs-lbl-req" data-i18n="gender_label">الجنس</label>
                   <input class="hs-input" type="text" name="gender" id="gender"
                          placeholder="M / F" required>
                 </div>
               </div>
 
               <div class="hs-form-g">
-                <label class="hs-lbl hs-lbl-req">رقم جواز السفر</label>
+                <label class="hs-lbl hs-lbl-req" data-i18n="passport_num_label">رقم جواز السفر</label>
                 <input class="hs-input" type="text" name="passport_number" id="passport_number"
                        placeholder="ادخل رقم الجواز" required>
               </div>
 
               <div class="hs-form-g">
-                <label class="hs-lbl hs-lbl-req">صلاحية جواز السفر</label>
+                <label class="hs-lbl hs-lbl-req" data-i18n="passport_exp_label">صلاحية جواز السفر</label>
                 <input class="hs-input" type="text" name="passport_expiry" id="expiry_date"
                        placeholder="YYYY-MM-DD" required>
               </div>
@@ -402,41 +404,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <div class="hs-divider"></div>
 
               <div style="font-size:.85rem;font-weight:700;color:var(--tx-2);margin-bottom:16px;display:flex;align-items:center;gap:6px">
-                <i class="fas fa-door-open" style="color:var(--g-600)"></i> تخصيص الغرفة
+                <i class="fas fa-door-open" style="color:var(--g-600)"></i> <span data-i18n="assign_room">تخصيص الغرفة</span>
               </div>
 
               <div class="hs-g2" style="gap:14px">
                 <div class="hs-form-g">
-                  <label class="hs-lbl">الطابق</label>
+                  <label class="hs-lbl" data-i18n="floor_label">الطابق</label>
                   <select class="hs-sel" id="floorSelect">
-                    <option value="">اختر الطابق</option>
-                    <option value="1">الطابق 1</option>
-                    <option value="2">الطابق 2</option>
-                    <option value="3">الطابق 3</option>
-                    <option value="4">الطابق 4</option>
+                    <option value="" data-i18n="select_floor">اختر الطابق</option>
+                    <option value="1" data-i18n="floor_1">الطابق 1</option>
+                    <option value="2" data-i18n="floor_2">الطابق 2</option>
+                    <option value="3" data-i18n="floor_3">الطابق 3</option>
+                    <option value="4" data-i18n="floor_4">الطابق 4</option>
                   </select>
                 </div>
                 <div class="hs-form-g">
-                  <label class="hs-lbl hs-lbl-req">رقم الغرفة</label>
+                  <label class="hs-lbl hs-lbl-req" data-i18n="room_num">رقم الغرفة</label>
                   <select class="hs-sel" name="room_number" id="room_number">
-                    <option value="">اختر الغرفة</option>
+                    <option value="" data-i18n="select_room">اختر الغرفة</option>
                   </select>
                 </div>
               </div>
 
               <div class="hs-g2" style="gap:14px">
                 <div class="hs-form-g">
-                  <label class="hs-lbl hs-lbl-req">تاريخ الدخول</label>
+                  <label class="hs-lbl hs-lbl-req" data-i18n="checkin_date">تاريخ الدخول</label>
                   <input class="hs-input" type="date" name="check_in" id="check_in" required>
                 </div>
                 <div class="hs-form-g">
-                  <label class="hs-lbl hs-lbl-req">تاريخ المغادرة</label>
+                  <label class="hs-lbl hs-lbl-req" data-i18n="checkout_date">تاريخ المغادرة</label>
                   <input class="hs-input" type="date" name="check_out" id="check_out" required>
                 </div>
               </div>
 
               <button type="button" class="hs-btn hs-btn-gold hs-btn-block" onclick="submitForm()">
-                <i class="fas fa-paper-plane"></i> تأكيد التسجيل
+                <i class="fas fa-paper-plane"></i> <span data-i18n="confirm_registration">تأكيد التسجيل</span>
               </button>
 
             </form>

@@ -78,7 +78,7 @@
   </nav>
 
   <div class="hs-sidebar-ft">
-    <button class="hs-sidebar-ft-btn" onclick="Lang.toggle()">
+ <button class="hs-sidebar-ft-btn" onclick="Lang.toggle()">
       <i class="fas fa-globe" style="font-size:15px"></i>
       <span id="langBtn" class="hs-nav-tx">English</span>
     </button>

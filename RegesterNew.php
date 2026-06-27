@@ -243,6 +243,7 @@ function previewFiles(files) {
     reader.readAsDataURL(file);
   });
   if(files.length > 0) uploadZone.classList.add('has-file');
+  Lang.apply();
 }
 </script>
 </body>
