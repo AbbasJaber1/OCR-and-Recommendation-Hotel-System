@@ -113,7 +113,7 @@ $roomsResult = $conn->query("SELECT room_number FROM rooms ORDER BY room_number"
                   </div>
                 </div>
                 <button type="submit" class="hs-btn hs-btn-primary hs-btn-sm">
-                  <i class="fas fa-search"></i> بحث
+                  <i class="fas fa-search"></i> <span data-i18n="search">بحث</span>
                 </button>
               </form>
             </div>

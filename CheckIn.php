@@ -41,7 +41,7 @@ include 'connect.php';
 <script>
 function CheckInS() {
   $.ajax({ url:'CheckInTable.php', type:'POST', data:{show:1},
-    success: r => { $('#CheckInAjax').html(r); HsToast.success('تم التحديث'); },
+    success: r => { $('#CheckInAjax').html(r); HsToast.success(Lang.t('refreshed')); },
     error: (x,s,e) => console.error('AJAX Error:',s,e)
   });
 }
@@ -52,7 +52,7 @@ function checkIn(logId) {
   xhr.onload = function() {
     if(xhr.status===200 && xhr.responseText.trim()==='Check-in successful') {
       CheckInS();
-      HsToast.success('تم تسجيل الوصول بنجاح');
+      HsToast.success(Lang.t('co_success'));
     }
   };
   xhr.send(`logId=${logId}`);

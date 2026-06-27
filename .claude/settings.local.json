@@ -3,7 +3,11 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"d:\\\\Xamp\\\\htdocs\\\\OCR-AND-RECOMMENDATION-HOTEL-SYSTEM\\\\FaceRecognationWithAction\\\\V5\" -Recurse -Force)",
       "Bash(Select-Object -Property FullName, PSIsContainer)",
-      "Bash(Sort-Object FullName)"
+      "Bash(Sort-Object FullName)",
+      "PowerShell(python --version; python -c \"import docx; print\\('python-docx OK'\\)\" 2>&1)",
+      "PowerShell(pip install *)",
+      "PowerShell(python -m pip install python-docx; python -c \"import docx; print\\('python-docx ready'\\)\")",
+      "PowerShell(& \"C:\\\\Users\\\\User\\\\Downloads\\\\build_report_com.ps1\" 2>&1)"
     ]
   }
 }

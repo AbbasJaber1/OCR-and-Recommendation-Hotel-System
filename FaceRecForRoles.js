@@ -19,11 +19,11 @@
         video.focus(); // ✅ Set focus only after modal is fully open
       } catch (error) {
         console.error("⚠️ Error accessing webcam:", error);
-        document.getElementById("faceRecStatus").innerText = "❌ فشل الوصول إلى الكاميرا!";
+        document.getElementById("faceRecStatus").innerText = Lang.t('face_cam_error');
         return;
       }
-  
-      document.getElementById("faceRecStatus").innerText = "🔍 يتم التحقق من الوجه...";
+
+      document.getElementById("faceRecStatus").innerText = Lang.t('face_checking');
   
       // Load Stored Guest Images for Matching
       const labeledFaceDescriptors = await getLabeledFaceDescriptions();
@@ -40,7 +40,7 @@
           .withFaceDescriptor();
   
         if (!detections) {
-          document.getElementById("faceRecStatus").innerText = "❌ لم يتم اكتشاف وجه! حاول مرة أخرى.";
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_no_face');
           return;
         }
   
@@ -49,7 +49,7 @@
         const confidence = Math.max(0, (1 - bestMatch.distance) * 100).toFixed(1);
   
         if (bestMatch.label) {
-          document.getElementById("faceRecStatus").innerText = `✅ تم التحقق! الثقة: ${confidence}%`;
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_verified').replace('{n}', confidence);
           stopWebcam(); 
           $.ajax({
            url: 'getUserdetails.php',
@@ -70,7 +70,7 @@
     });
   
         } else {
-          document.getElementById("faceRecStatus").innerText = `❌ الوجه لا يطابق الضيف المسجل!`;
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_no_match');
         }
   
       
@@ -99,11 +99,11 @@
         video.focus(); // ✅ Set focus only after modal is fully open
       } catch (error) {
         console.error("⚠️ Error accessing webcam:", error);
-        document.getElementById("faceRecStatus").innerText = "❌ فشل الوصول إلى الكاميرا!";
+        document.getElementById("faceRecStatus").innerText = Lang.t('face_cam_error');
         return;
       }
-  
-      document.getElementById("faceRecStatus").innerText = "🔍 يتم التحقق من الوجه...";
+
+      document.getElementById("faceRecStatus").innerText = Lang.t('face_checking');
   
       // Load Stored Guest Images for Matching
       const labeledFaceDescriptors = await getLabeledFaceDescriptions();
@@ -120,7 +120,7 @@
           .withFaceDescriptor();
   
         if (!detections) {
-          document.getElementById("faceRecStatus").innerText = "❌ لم يتم اكتشاف وجه! حاول مرة أخرى.";
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_no_face');
           return;
         }
   
@@ -129,7 +129,7 @@
         const confidence = Math.max(0, (1 - bestMatch.distance) * 100).toFixed(1);
   
         if (bestMatch.label) {
-          document.getElementById("faceRecStatus").innerText = `✅ تم التحقق! الثقة: ${confidence}%`;
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_verified').replace('{n}', confidence);
           stopWebcam(); 
           $.ajax({
            url: 'getUserdetails.php',
@@ -150,7 +150,7 @@
     });
   
         } else {
-          document.getElementById("faceRecStatus").innerText = `❌ الوجه لا يطابق الضيف المسجل!`;
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_no_match');
         }
   
       
@@ -178,11 +178,11 @@
         video.focus(); // ✅ Set focus only after modal is fully open
       } catch (error) {
         console.error("⚠️ Error accessing webcam:", error);
-        document.getElementById("faceRecStatus").innerText = "❌ فشل الوصول إلى الكاميرا!";
+        document.getElementById("faceRecStatus").innerText = Lang.t('face_cam_error');
         return;
       }
-  
-      document.getElementById("faceRecStatus").innerText = "🔍 يتم التحقق من الوجه...";
+
+      document.getElementById("faceRecStatus").innerText = Lang.t('face_checking');
   
       // Load Stored Guest Images for Matching
       const labeledFaceDescriptors = await getLabeledFaceDescriptions();
@@ -199,7 +199,7 @@
           .withFaceDescriptor();
   
         if (!detections) {
-          document.getElementById("faceRecStatus").innerText = "❌ لم يتم اكتشاف وجه! حاول مرة أخرى.";
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_no_face');
           return;
         }
   
@@ -208,7 +208,7 @@
         const confidence = Math.max(0, (1 - bestMatch.distance) * 100).toFixed(1);
   
         if (bestMatch.label) {
-          document.getElementById("faceRecStatus").innerText = `✅ تم التحقق! الثقة: ${confidence}%`;
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_verified').replace('{n}', confidence);
           stopWebcam(); 
           $.ajax({
            url: 'getUserdetails.php',
@@ -229,7 +229,7 @@
     });
   
         } else {
-          document.getElementById("faceRecStatus").innerText = `❌ الوجه لا يطابق الضيف المسجل!`;
+          document.getElementById("faceRecStatus").innerText = Lang.t('face_no_match');
         }
   
       

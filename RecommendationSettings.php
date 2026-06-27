@@ -42,7 +42,7 @@ require_once 'connect.php';
       </div>
       <div class="hs-topbar-end">
         <div id="statusBadge">
-          <span class="badge bg-secondary status-badge">
+          <span class="badge bg-secondary status-badge" data-i18n="loading">
             <i class="fas fa-spinner fa-spin me-1"></i> جاري التحميل...
           </span>
         </div>
@@ -103,11 +103,11 @@ require_once 'connect.php';
 
             <!-- Instructions -->
             <div style="margin-top:16px;padding:14px;background:var(--g-25);border-radius:var(--r-md);border-right:3px solid var(--g-500)">
-              <div style="font-size:.85rem;font-weight:600;color:var(--g-700);margin-bottom:6px"><i class="fas fa-info-circle me-1"></i> تعليمات:</div>
+              <div style="font-size:.85rem;font-weight:600;color:var(--g-700);margin-bottom:6px"><i class="fas fa-info-circle me-1"></i> <span data-i18n="instr_title">تعليمات:</span></div>
               <ul style="padding-right:16px;color:var(--tx-2);font-size:.82rem;line-height:2;margin:0">
-                <li>اسحب العلامة لتحديد موقع الفندق بدقة</li>
-                <li>أو استخدم مربع البحث للعثور على العنوان</li>
-                <li>انقر على الخريطة لنقل العلامة</li>
+                <li data-i18n="instr_1">اسحب العلامة لتحديد موقع الفندق بدقة</li>
+                <li data-i18n="instr_2">أو استخدم مربع البحث للعثور على العنوان</li>
+                <li data-i18n="instr_3">انقر على الخريطة لنقل العلامة</li>
               </ul>
             </div>
           </div>
@@ -191,7 +191,7 @@ require_once 'connect.php';
   <div id="toast" class="toast" role="alert">
     <div class="toast-header">
       <i class="fas fa-bell me-2 text-success"></i>
-      <strong class="me-auto" id="toastTitle">إشعار</strong>
+      <strong class="me-auto" id="toastTitle" data-i18n="notification">إشعار</strong>
       <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
     </div>
     <div class="toast-body" id="toastMessage"></div>
@@ -272,7 +272,7 @@ async function geocodeAddress() {
     if (!q) return;
 
     const resultsBox = document.getElementById('nominatimResults');
-    resultsBox.innerHTML = '<div style="padding:10px;color:var(--tx-3);font-size:.85rem">جاري البحث...</div>';
+    resultsBox.innerHTML = `<div style="padding:10px;color:var(--tx-3);font-size:.85rem">${Lang.t('searching')}</div>`;
     resultsBox.style.display = 'block';
 
     try {
@@ -281,7 +281,7 @@ async function geocodeAddress() {
         const data = await resp.json();
 
         if (!data.length) {
-            resultsBox.innerHTML = '<div style="padding:10px;color:var(--tx-3);font-size:.85rem">لم يتم العثور على نتائج</div>';
+            resultsBox.innerHTML = `<div style="padding:10px;color:var(--tx-3);font-size:.85rem">${Lang.t('addr_no_results')}</div>`;
             return;
         }
 
@@ -294,7 +294,7 @@ async function geocodeAddress() {
             </div>
         `).join('');
     } catch (err) {
-        resultsBox.innerHTML = '<div style="padding:10px;color:#DC2626;font-size:.85rem">فشل في الاتصال بخدمة البحث</div>';
+        resultsBox.innerHTML = `<div style="padding:10px;color:#DC2626;font-size:.85rem">${Lang.t('addr_conn_fail')}</div>`;
     }
 }
 
@@ -337,7 +337,7 @@ async function loadCurrentLocation() {
 // ── GPS ───────────────────────────────────────────────────────────────────
 function getCurrentLocation() {
     if (!navigator.geolocation) {
-        showToast('خطأ', 'المتصفح لا يدعم تحديد الموقع', 'warning');
+        showToast(Lang.t('warning_title'), Lang.t('geo_no_support'), 'warning');
         return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -346,9 +346,9 @@ function getCurrentLocation() {
             map.setView([lat, lng], 17);
             marker.setLatLng([lat, lng]);
             updateCoordinates(lat, lng);
-            showToast('نجاح', 'تم تحديد موقعك الحالي', 'success');
+            showToast(Lang.t('success_title'), Lang.t('geo_success'), 'success');
         },
-        err => showToast('خطأ', 'فشل في تحديد الموقع: ' + err.message, 'danger')
+        err => showToast(Lang.t('err_title'), Lang.t('geo_fail') + ': ' + err.message, 'danger')
     );
 }
 
@@ -360,13 +360,13 @@ async function saveLocation(e) {
     const label = document.getElementById('label').value.trim();
 
     if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
-        showToast('خطأ', 'يرجى تحديد موقع على الخريطة أولاً', 'warning');
+        showToast(Lang.t('err_title'), Lang.t('loc_no_sel'), 'warning');
         return;
     }
 
     const btn = document.getElementById('saveBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري الحفظ...';
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${Lang.t('saving')}`;
 
     try {
         const resp = await fetch('api/recommendation/hotel_location.php', {
@@ -377,15 +377,15 @@ async function saveLocation(e) {
         const data = await resp.json();
 
         if (data.success) {
-            showToast('نجاح', 'تم حفظ موقع الفندق بنجاح', 'success');
+            showToast(Lang.t('success_title'), Lang.t('loc_saved'), 'success');
             updateStatusBadge(true);
-            document.getElementById('lastUpdated').textContent = new Date().toLocaleString('ar-IQ');
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
             document.getElementById('updatedBy').textContent   = 'Admin';
         } else {
-            showToast('خطأ', data.error || 'فشل في حفظ الموقع', 'danger');
+            showToast(Lang.t('err_title'), data.error || Lang.t('loc_save_fail'), 'danger');
         }
     } catch (err) {
-        showToast('خطأ', 'حدث خطأ في الاتصال', 'danger');
+        showToast(Lang.t('err_title'), Lang.t('conn_error'), 'danger');
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-save"></i> <span data-i18n="set_save">حفظ الموقع</span>';
@@ -396,8 +396,8 @@ async function saveLocation(e) {
 // ── Status badge ──────────────────────────────────────────────────────────
 function updateStatusBadge(ok) {
     document.getElementById('statusBadge').innerHTML = ok
-        ? `<span class="badge bg-success status-badge"><i class="fas fa-check-circle me-1"></i> الموقع مُعد</span>`
-        : `<span class="badge bg-warning status-badge"><i class="fas fa-exclamation-triangle me-1"></i> غير مُعد</span>`;
+        ? `<span class="badge bg-success status-badge"><i class="fas fa-check-circle me-1"></i> ${Lang.t('loc_configured')}</span>`
+        : `<span class="badge bg-warning status-badge"><i class="fas fa-exclamation-triangle me-1"></i> ${Lang.t('loc_not_conf')}</span>`;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────

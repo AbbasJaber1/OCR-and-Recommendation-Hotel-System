@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="hs-card-bd">
               <p style="color:var(--tx-2);font-size:.875rem;line-height:1.8;margin:0">
-                الصور تُحفظ محلياً في مجلد <code style="background:var(--s-2);padding:2px 6px;border-radius:4px;font-size:.8rem">label/</code> وتُستخدم حصراً لنظام التعرف على الوجه.
+                <span data-i18n="data_security_text_1">الصور تُحفظ محلياً في مجلد</span> <code style="background:var(--s-2);padding:2px 6px;border-radius:4px;font-size:.8rem">label/</code> <span data-i18n="data_security_text_2">وتُستخدم حصراً لنظام التعرف على الوجه.</span>
               </p>
             </div>
           </div>

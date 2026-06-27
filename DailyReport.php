@@ -94,7 +94,7 @@ $totalRows = $result ? $result->num_rows : 0;
             </form>
             <form method="POST" style="align-self:flex-end">
               <button type="submit" class="hs-btn hs-btn-primary">
-                <i class="fas fa-search"></i> بحث
+                <i class="fas fa-search"></i> <span data-i18n="search">بحث</span>
               </button>
             </form>
           </div>

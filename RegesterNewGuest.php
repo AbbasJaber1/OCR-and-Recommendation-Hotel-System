@@ -268,15 +268,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="hs-topbar-start">
         <button class="hs-mob-btn" id="mobMenuBtn"><i class="fas fa-bars"></i></button>
         <div>
-          <div class="hs-pg-title">تسجيل ضيف جديد</div>
-          <div class="hs-pg-sub">مسح جواز السفر وتسجيل بيانات الضيف</div>
+          <div class="hs-pg-title" data-i18n="ocr_title">تسجيل ضيف جديد</div>
+          <div class="hs-pg-sub" data-i18n="ocr_sub">مسح جواز السفر وتسجيل بيانات الضيف</div>
         </div>
       </div>
       <div class="hs-topbar-end">
         <button class="hs-icon-btn"><i class="fas fa-bell"></i><span class="hs-notif-dot"></span></button>
         <div class="hs-user-pill">
           <div class="hs-avatar"><i class="fas fa-user" style="font-size:10px"></i></div>
-          <span class="hs-uname">موظف</span>
+          <span class="hs-uname" data-i18n="employee">موظف</span>
         </div>
       </div>
     </header>
@@ -362,17 +362,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <div class="hs-g2" style="gap:14px">
                 <div class="hs-form-g">
                   <label class="hs-lbl hs-lbl-req" data-i18n="full_name_title">الاسم الكريم</label>
-                  <input class="hs-input" type="text" id="first_name" placeholder="الاسم الأول" required>
+                  <input class="hs-input" type="text" id="first_name" data-i18n="first_name" data-i18n-attr="placeholder" placeholder="الاسم الأول" required>
                 </div>
                 <div class="hs-form-g">
                   <label class="hs-lbl hs-lbl-req" data-i18n="family_name">اسم العائلة</label>
-                  <input class="hs-input" type="text" id="last_name" placeholder="اسم العائلة" required>
+                  <input class="hs-input" type="text" id="last_name" data-i18n="last_name" data-i18n-attr="placeholder" placeholder="اسم العائلة" required>
                 </div>
               </div>
 
               <div class="hs-form-g">
                 <label class="hs-lbl hs-lbl-req" data-i18n="nationality_label">الجنسية</label>
                 <input class="hs-input" type="text" name="nationality" id="nationality"
+                       data-i18n="enter_nationality" data-i18n-attr="placeholder"
                        placeholder="ادخل الجنسية" required>
               </div>
 
@@ -392,6 +393,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <div class="hs-form-g">
                 <label class="hs-lbl hs-lbl-req" data-i18n="passport_num_label">رقم جواز السفر</label>
                 <input class="hs-input" type="text" name="passport_number" id="passport_number"
+                       data-i18n="enter_passport" data-i18n-attr="placeholder"
                        placeholder="ادخل رقم الجواز" required>
               </div>
 

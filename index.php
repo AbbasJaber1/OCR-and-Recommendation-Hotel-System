@@ -41,8 +41,8 @@ require "connect.php";
   <div class="land-nav-logo">
     <div class="land-nav-logo-ic"><img src="assets/logo/Full_logo.png" alt="Logo" style="height:36px;width:auto"></div>
     <div>
-      <div class="land-nav-logo-tx">الفندق</div>
-      <div class="land-nav-logo-sub">نظام إدارة فندقي متكامل</div>
+      <div class="land-nav-logo-tx" data-i18n="hotel_name">الفندق</div>
+      <div class="land-nav-logo-sub" data-i18n="hotel_system">نظام إدارة فندقي متكامل</div>
     </div>
   </div>
   <button class="hs-lang-btn" onclick="Lang.toggle()" style="border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff">
@@ -58,7 +58,7 @@ require "connect.php";
       <div class="modal-header" style="background:linear-gradient(135deg,#145220,#1B5E20);border-bottom:1px solid rgba(255,255,255,.08)">
         <h5 class="modal-title text-white" style="font-size:.95rem;font-weight:700">
           <i class="fas fa-camera me-2" style="color:#E8C84A"></i>
-          تأكيد الهوية باستخدام التعرف على الوجه
+          <span data-i18n="face_id_confirm">تأكيد الهوية باستخدام التعرف على الوجه</span>
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="stopWebcam()"></button>
       </div>
@@ -70,7 +70,7 @@ require "connect.php";
         </div>
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,.04);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,.06)">
           <div class="hs-spin" style="border-top-color:#43A047;width:16px;height:16px;border-width:2px"></div>
-          <p id="faceRecStatus" class="mb-0" style="color:rgba(255,255,255,.7);font-size:.875rem">يرجى النظر إلى الكاميرا...</p>
+          <p id="faceRecStatus" class="mb-0" style="color:rgba(255,255,255,.7);font-size:.875rem" data-i18n="face_look_camera">يرجى النظر إلى الكاميرا...</p>
         </div>
       </div>
     </div>
@@ -114,7 +114,7 @@ require "connect.php";
       <p class="hs-role-desc" data-i18n="land_admin_d">لوحة التحكم الإدارية وإدارة الموظفين</p>
       <div style="margin-top:20px">
         <span style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);font-size:.8rem">
-          <i class="fas fa-fingerprint"></i> تسجيل بالوجه
+          <i class="fas fa-fingerprint"></i> <span data-i18n="face_reg">تسجيل بالوجه</span>
         </span>
       </div>
     </div>
@@ -126,7 +126,7 @@ require "connect.php";
       <p class="hs-role-desc" data-i18n="land_checkin_d">تسجيل وصول الضيوف وتتبع الغرف</p>
       <div style="margin-top:20px">
         <span style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);font-size:.8rem">
-          <i class="fas fa-arrow-left"></i> دخول مباشر
+          <i class="fas fa-arrow-left"></i> <span data-i18n="direct_entry">دخول مباشر</span>
         </span>
       </div>
     </a>
@@ -138,7 +138,7 @@ require "connect.php";
       <p class="hs-role-desc" data-i18n="land_reception_d">استقبال الضيوف الجدد وإدارة الحجوزات</p>
       <div style="margin-top:20px">
         <span style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);font-size:.8rem">
-          <i class="fas fa-fingerprint"></i> تسجيل بالوجه
+          <i class="fas fa-fingerprint"></i> <span data-i18n="face_reg">تسجيل بالوجه</span>
         </span>
       </div>
     </div>
@@ -147,7 +147,7 @@ require "connect.php";
 
   <!-- Footer -->
   <p style="color:rgba(255,255,255,.2);font-size:.78rem;margin-top:48px;position:relative;z-index:1">
-    نظام إدارة الفندق &copy; <?= date('Y') ?>
+    <span data-i18n="land_title">نظام إدارة الفندق</span> &copy; <?= date('Y') ?>
   </p>
 </div>
 

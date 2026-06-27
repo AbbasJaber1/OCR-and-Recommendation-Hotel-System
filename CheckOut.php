@@ -140,7 +140,7 @@ $result = $conn->query($sql);
         </div>
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,.04);border-radius:12px;padding:10px;border:1px solid rgba(255,255,255,.06)">
           <div class="hs-spin" style="border-top-color:var(--g-400);width:14px;height:14px;border-width:2px"></div>
-          <p id="faceRecStatus" class="mb-0" style="color:rgba(255,255,255,.7);font-size:.85rem">يرجى النظر إلى الكاميرا...</p>
+          <p id="faceRecStatus" class="mb-0" style="color:rgba(255,255,255,.7);font-size:.85rem" data-i18n="face_look_camera">يرجى النظر إلى الكاميرا...</p>
         </div>
       </div>
     </div>

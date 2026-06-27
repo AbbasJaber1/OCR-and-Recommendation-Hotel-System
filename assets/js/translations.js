@@ -149,6 +149,44 @@ const T = {
     please_select_image:'اختر صورة أولاً', processing_ocr:'جاري معالجة الصورة...', ocr_completed:'تمت معالجة الصورة بنجاح!',
     assign_room:'تخصيص الغرفة', floor_label:'الطابق', floor_1:'الطابق 1', floor_2:'الطابق 2', floor_3:'الطابق 3', floor_4:'الطابق 4',
     room_num:'رقم الغرفة', checkin_date:'تاريخ الدخول', checkout_date:'تاريخ المغادرة', confirm_registration:'تأكيد التسجيل',
+    // Face Recognition status
+    face_cam_error:'❌ فشل الوصول إلى الكاميرا!', face_checking:'🔍 يتم التحقق من الوجه...',
+    face_no_face:'❌ لم يتم اكتشاف وجه! حاول مرة أخرى.', face_verified:'✅ تم التحقق! الثقة: {n}%',
+    face_no_match:'❌ الوجه لا يطابق الضيف المسجل!',
+    // Toast labels
+    notification:'إشعار', refreshed:'تم التحديث', co_success:'تم تأكيد المغادرة',
+    err_title:'خطأ', success_title:'نجاح', warning_title:'تنبيه',
+    // Geolocation / Settings
+    geo_no_support:'المتصفح لا يدعم تحديد الموقع', geo_success:'تم تحديد موقعك الحالي',
+    geo_fail:'فشل في تحديد الموقع', addr_no_results:'لم يتم العثور على نتائج',
+    addr_conn_fail:'فشل في الاتصال بخدمة البحث', saving:'جاري الحفظ...',
+    loc_saved:'تم حفظ موقع الفندق بنجاح', loc_save_fail:'فشل في حفظ الموقع',
+    conn_error:'حدث خطأ في الاتصال', loc_no_sel:'يرجى تحديد موقع على الخريطة أولاً',
+    loc_configured:'الموقع مُعد', loc_not_conf:'غير مُعد',
+    // Map instructions
+    instr_title:'تعليمات:', instr_1:'اسحب العلامة لتحديد موقع الفندق بدقة',
+    instr_2:'أو استخدم مربع البحث للعثور على العنوان', instr_3:'انقر على الخريطة لنقل العلامة',
+    // Recommendation Service JS & HTML
+    cat_load_fail:'فشل في تحميل الفئات', select_cat_warn:'يرجى اختيار فئة للبحث',
+    hotel_not_conf_msg:'موقع الفندق غير مُعد. يرجى طلب الإدارة لتحديده.',
+    search_error:'فشل في البحث', link_copied:'تم نسخ الرابط', link_copy_fail:'فشل في نسخ الرابط',
+    info_from_hotel:'البحث من موقع الفندق', info_nat_boost:'تم تفضيل النتائج حسب الجنسية:',
+    info_by_dist:'مرتبة حسب المسافة (أقرب أولاً)', no_places:'لم يتم العثور على أماكن',
+    try_category:'جرب فئة أخرى أو تأكد من تحديد موقع الفندق',
+    boosted_lbl:'مُفضّل', hotel_lbl:'الفندق', open_osm:'فتح في OpenStreetMap',
+    copy_link_lbl:'نسخ الرابط', directions_to:'الاتجاهات إلى',
+    results_search:'نتائج البحث', nearby_places_lbl:'الأماكن القريبة',
+    select_guest_title:'اختر الضيف',
+    multiple_guests_msg:'تم العثور على عدة ضيوف. يرجى اختيار الضيف المطلوب:',
+    continue_no_guest:'متابعة بدون ضيف', passport_lbl:'جواز:', room_lbl:'غرفة:',
+    unknown_nat:'غير محدد', search_info_title:'معلومات البحث',
+    guest_opt_note:'(اختياري — يُستخدم لتخصيص النتائج حسب الجنسية)',
+    rec_hero_sub:'ابحث عن أفضل الأماكن للضيوف', ratings_count:'تقييم',
+    // Role cards & landing
+    face_reg:'تسجيل بالوجه', direct_entry:'دخول مباشر',
+    // Data security paragraph (split around <code> tag)
+    data_security_text_1:'الصور تُحفظ محلياً في مجلد',
+    data_security_text_2:'وتُستخدم حصراً لنظام التعرف على الوجه.',
     // Switch
     switch:'English',
   },
@@ -301,6 +339,44 @@ const T = {
     please_select_image:'Select an image first', processing_ocr:'Processing image...', ocr_completed:'Image processing completed!',
     assign_room:'Assign Room', floor_label:'Floor', floor_1:'Floor 1', floor_2:'Floor 2', floor_3:'Floor 3', floor_4:'Floor 4',
     room_num:'Room Number', checkin_date:'Check-in Date', checkout_date:'Check-out Date', confirm_registration:'Confirm Registration',
+    // Face Recognition status
+    face_cam_error:'❌ Could not access camera!', face_checking:'🔍 Verifying face...',
+    face_no_face:'❌ No face detected! Try again.', face_verified:'✅ Verified! Confidence: {n}%',
+    face_no_match:'❌ Face does not match any registered staff!',
+    // Toast labels
+    notification:'Notification', refreshed:'Refreshed', co_success:'Departure confirmed',
+    err_title:'Error', success_title:'Success', warning_title:'Warning',
+    // Geolocation / Settings
+    geo_no_support:'Browser does not support geolocation', geo_success:'Current location set',
+    geo_fail:'Failed to get location', addr_no_results:'No results found',
+    addr_conn_fail:'Failed to connect to search service', saving:'Saving...',
+    loc_saved:'Hotel location saved successfully', loc_save_fail:'Failed to save location',
+    conn_error:'Connection error', loc_no_sel:'Please select a location on the map first',
+    loc_configured:'Location configured', loc_not_conf:'Not configured',
+    // Map instructions
+    instr_title:'Instructions:', instr_1:'Drag the marker to pin the exact hotel location',
+    instr_2:'Or use the search box to find the address', instr_3:'Click on the map to move the marker',
+    // Recommendation Service JS & HTML
+    cat_load_fail:'Failed to load categories', select_cat_warn:'Please select a category',
+    hotel_not_conf_msg:'Hotel location not configured. Please ask management to set it.',
+    search_error:'Search failed', link_copied:'Link copied', link_copy_fail:'Failed to copy link',
+    info_from_hotel:'Searching from hotel location', info_nat_boost:'Results boosted by nationality:',
+    info_by_dist:'Sorted by distance (nearest first)', no_places:'No places found',
+    try_category:'Try another category or make sure the hotel location is set',
+    boosted_lbl:'Boosted', hotel_lbl:'Hotel', open_osm:'Open in OpenStreetMap',
+    copy_link_lbl:'Copy Link', directions_to:'Directions to',
+    results_search:'Search Results', nearby_places_lbl:'Nearby Places',
+    select_guest_title:'Select Guest',
+    multiple_guests_msg:'Multiple guests found. Please select the desired guest:',
+    continue_no_guest:'Continue without guest', passport_lbl:'Passport:', room_lbl:'Room:',
+    unknown_nat:'Unknown', search_info_title:'Search Info',
+    guest_opt_note:'(Optional — personalizes results by nationality)',
+    rec_hero_sub:'Search the best nearby places for guests', ratings_count:'ratings',
+    // Role cards & landing
+    face_reg:'Face Recognition', direct_entry:'Direct Entry',
+    // Data security paragraph (split around <code> tag)
+    data_security_text_1:'Photos are stored locally in the',
+    data_security_text_2:'folder and used exclusively for the face recognition system.',
     // Switch
     switch:'العربية',
   }

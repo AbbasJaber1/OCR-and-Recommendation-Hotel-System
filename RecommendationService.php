@@ -200,7 +200,7 @@ require_once 'connect.php';
             </div>
             <div>
               <h2 style="color:#fff;margin-bottom:4px;font-size:1.25rem" data-i18n="rec_hero_title">خدمة توصيات الأماكن القريبة</h2>
-              <p style="color:rgba(255,255,255,.65);margin:0;font-size:.875rem">Hotel Nearby Recommendations — ابحث عن أفضل الأماكن للضيوف</p>
+              <p style="color:rgba(255,255,255,.65);margin:0;font-size:.875rem" data-i18n="rec_hero_sub">ابحث عن أفضل الأماكن للضيوف</p>
             </div>
           </div>
         </div>
@@ -221,8 +221,8 @@ require_once 'connect.php';
             <div class="hs-form-g">
               <label class="hs-lbl">
                 <i class="fas fa-user" style="color:var(--g-600);margin-left:6px"></i>
-                اسم الضيف أو رقم الجواز
-                <span class="optional-label">(اختياري — يُستخدم لتخصيص النتائج حسب الجنسية)</span>
+                <span data-i18n="rec_guest">اسم الضيف أو رقم الجواز (اختياري)</span>
+                <span class="optional-label" data-i18n="guest_opt_note">(اختياري — يُستخدم لتخصيص النتائج حسب الجنسية)</span>
               </label>
               <div class="guest-input-group">
                 <div class="hs-search-bar">
@@ -250,7 +250,7 @@ require_once 'connect.php';
                   <span id="selectedGuestPassport"></span>
                   <span style="color:var(--bd-2)">|</span>
                   <i class="fas fa-door-open"></i>
-                  غرفة <span id="selectedGuestRoom"></span>
+                  <span data-i18n="room_lbl">غرفة:</span> <span id="selectedGuestRoom"></span>
                 </small>
                 <input type="hidden" id="selectedGuestId" name="guestId">
               </div>
@@ -260,7 +260,7 @@ require_once 'connect.php';
             <div class="hs-form-g">
               <label class="hs-lbl">
                 <i class="fas fa-th-large" style="color:var(--g-600);margin-left:6px"></i>
-                اختر الفئة <span style="color:#DC2626">*</span>
+                <span data-i18n="rec_cat">اختر الفئة</span> <span style="color:#DC2626">*</span>
               </label>
               <div class="row g-3" id="categoriesGrid">
                 <!-- Categories loaded by JS -->
@@ -293,7 +293,7 @@ require_once 'connect.php';
       <div class="modal-header">
         <h5 class="modal-title" style="display:flex;align-items:center;gap:10px">
           <i class="fas fa-map-marked-alt"></i>
-          نتائج البحث — <span id="resultsCategoryName"></span>
+          <span data-i18n="results_search">نتائج البحث</span> — <span id="resultsCategoryName"></span>
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
@@ -303,7 +303,7 @@ require_once 'connect.php';
           <div style="display:flex;align-items:center;gap:14px">
             <i class="fas fa-info-circle fa-2x"></i>
             <div>
-              <strong>معلومات البحث</strong>
+              <strong data-i18n="search_info_title">معلومات البحث</strong>
               <p class="mb-0 small" id="searchInfoText"></p>
             </div>
           </div>
@@ -316,7 +316,7 @@ require_once 'connect.php';
           <div class="col-lg-6">
             <h6 class="mb-3">
               <i class="fas fa-list-ol me-2"></i>
-              الأماكن القريبة (<span id="placesCount">0</span>)
+              <span data-i18n="nearby_places_lbl">الأماكن القريبة</span> (<span id="placesCount">0</span>)
             </h6>
             <div id="placesList"></div>
           </div>
@@ -326,16 +326,16 @@ require_once 'connect.php';
         <div class="directions-card p-4 mt-4" id="directionsCard" style="display:none">
           <div class="row align-items-center">
             <div class="col-md-6">
-              <h5 style="color:#fff"><i class="fas fa-directions me-2"></i>الاتجاهات إلى</h5>
+              <h5 style="color:#fff"><i class="fas fa-directions me-2"></i><span data-i18n="directions_to">الاتجاهات إلى</span></h5>
               <h4 id="selectedPlaceName" style="color:#fff;margin-bottom:4px"></h4>
               <small id="selectedPlaceDistance" style="color:rgba(255,255,255,.7)"></small>
             </div>
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
               <a href="#" id="openMapsBtn" target="_blank" class="btn btn-light btn-lg me-2">
-                <i class="fas fa-map me-2"></i> فتح في OpenStreetMap
+                <i class="fas fa-map me-2"></i> <span data-i18n="open_osm">فتح في OpenStreetMap</span>
               </a>
               <button type="button" class="btn btn-outline-light" id="copyLinkBtn">
-                <i class="fas fa-copy me-2"></i> نسخ الرابط
+                <i class="fas fa-copy me-2"></i> <span data-i18n="copy_link_lbl">نسخ الرابط</span>
               </button>
             </div>
           </div>
@@ -351,14 +351,14 @@ require_once 'connect.php';
   <div class="modal-dialog">
     <div class="modal-content" style="border-radius:var(--r-xl);overflow:hidden">
       <div class="modal-header" style="background:var(--g-800);color:#fff">
-        <h5 class="modal-title"><i class="fas fa-users me-2"></i>اختر الضيف</h5>
+        <h5 class="modal-title"><i class="fas fa-users me-2"></i><span data-i18n="select_guest_title">اختر الضيف</span></h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <p class="text-muted">تم العثور على عدة ضيوف. يرجى اختيار الضيف المطلوب:</p>
+        <p class="text-muted" data-i18n="multiple_guests_msg">تم العثور على عدة ضيوف. يرجى اختيار الضيف المطلوب:</p>
         <div id="guestSelectList"></div>
         <div class="text-center mt-3">
-          <button type="button" class="btn btn-secondary" onclick="continueWithoutGuest()">
+          <button type="button" class="btn btn-secondary" onclick="continueWithoutGuest()" data-i18n="continue_no_guest">
             متابعة بدون ضيف
           </button>
         </div>
@@ -372,7 +372,7 @@ require_once 'connect.php';
   <div id="toast" class="toast" role="alert">
     <div class="toast-header">
       <i class="fas fa-bell me-2 text-success"></i>
-      <strong class="me-auto" id="toastTitle">إشعار</strong>
+      <strong class="me-auto" id="toastTitle" data-i18n="notification">إشعار</strong>
       <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
     </div>
     <div class="toast-body" id="toastMessage"></div>
@@ -427,7 +427,7 @@ async function loadCategories() {
         }
     } catch (error) {
         console.error('Failed to load categories:', error);
-        showToast('خطأ', 'فشل في تحميل الفئات', 'danger');
+        showToast(Lang.t('err_title'), Lang.t('cat_load_fail'), 'danger');
     }
 }
 
@@ -524,7 +524,7 @@ function renderGuestSuggestions(guests) {
             <div class="fw-bold">${guest.name}</div>
             <small class="text-muted">
                 ${guest.nationality ? `<span class="nationality-badge">${guest.nationality}</span>` : ''}
-                جواز: ${guest.passportNumber || '-'} | غرفة: ${guest.roomNumber || '-'}
+                ${Lang.t('passport_lbl')} ${guest.passportNumber || '-'} | ${Lang.t('room_lbl')} ${guest.roomNumber || '-'}
             </small>
         </div>
     `).join('');
@@ -539,7 +539,7 @@ function selectGuest(guest) {
     document.getElementById('guestSuggestions').style.display = 'none';
 
     document.getElementById('selectedGuestName').textContent = guest.name;
-    document.getElementById('selectedGuestNationality').textContent = guest.nationality || 'غير محدد';
+    document.getElementById('selectedGuestNationality').textContent = guest.nationality || Lang.t('unknown_nat');
     document.getElementById('selectedGuestPassport').textContent = guest.passportNumber || '-';
     document.getElementById('selectedGuestRoom').textContent = guest.roomNumber || '-';
     document.getElementById('selectedGuestId').value = guest.id;
@@ -566,7 +566,7 @@ function setupForm() {
         e.preventDefault();
 
         if (!selectedCategory) {
-            showToast('تنبيه', 'يرجى اختيار فئة للبحث', 'warning');
+            showToast(Lang.t('warning_title'), Lang.t('select_cat_warn'), 'warning');
             return;
         }
 
@@ -601,14 +601,14 @@ async function performSearch() {
             showResults(data.data);
         } else {
             if (data.errorCode === 'HOTEL_NOT_CONFIGURED') {
-                showToast('خطأ', 'موقع الفندق غير مُعد. يرجى طلب الإدارة لتحديده.', 'warning');
+                showToast(Lang.t('err_title'), Lang.t('hotel_not_conf_msg'), 'warning');
             } else {
-                showToast('خطأ', data.error || 'فشل في البحث', 'danger');
+                showToast(Lang.t('err_title'), data.error || Lang.t('search_error'), 'danger');
             }
         }
     } catch (error) {
         console.error('Search failed:', error);
-        showToast('خطأ', 'حدث خطأ في الاتصال', 'danger');
+        showToast(Lang.t('err_title'), Lang.t('conn_error'), 'danger');
     } finally {
         showLoading(false);
     }
@@ -621,11 +621,11 @@ function showResults(data) {
     document.getElementById('placesCount').textContent = data.count;
 
     // Update search info
-    let infoText = `البحث من موقع الفندق`;
+    let infoText = Lang.t('info_from_hotel');
     if (data.nationalityUsed) {
-        infoText += ` | تم تفضيل النتائج حسب الجنسية: <strong>${data.nationalityUsed}</strong>`;
+        infoText += ` | ${Lang.t('info_nat_boost')} <strong>${data.nationalityUsed}</strong>`;
     } else {
-        infoText += ` | مرتبة حسب المسافة (أقرب أولاً)`;
+        infoText += ` | ${Lang.t('info_by_dist')}`;
     }
     document.getElementById('searchInfoText').innerHTML = infoText;
 
@@ -651,8 +651,8 @@ function renderPlacesList(places) {
         container.innerHTML = `
             <div class="text-center py-4">
                 <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                <h5>لم يتم العثور على أماكن</h5>
-                <p class="text-muted">جرب فئة أخرى أو تأكد من تحديد موقع الفندق</p>
+                <h5>${Lang.t('no_places')}</h5>
+                <p class="text-muted">${Lang.t('try_category')}</p>
             </div>
         `;
         return;
@@ -667,7 +667,7 @@ function renderPlacesList(places) {
                         <div>
                             <h6 class="mb-1">
                                 ${place.name}
-                                ${place.nationalityBoosted ? '<span class="boosted-badge ms-1"><i class="fas fa-star"></i> مُفضّل</span>' : ''}
+                                ${place.nationalityBoosted ? `<span class="boosted-badge ms-1"><i class="fas fa-star"></i> ${Lang.t('boosted_lbl')}</span>` : ''}
                             </h6>
                             <small class="text-muted">${place.address}</small>
                         </div>
@@ -675,8 +675,8 @@ function renderPlacesList(places) {
                             <span class="badge bg-primary">${place.distanceText}</span>
                             ${place.openNow !== null ?
                                 (place.openNow ?
-                                    '<span class="badge bg-success open-badge mt-1 d-block">مفتوح</span>' :
-                                    '<span class="badge bg-danger open-badge mt-1 d-block">مغلق</span>')
+                                    `<span class="badge bg-success open-badge mt-1 d-block">${Lang.t('st_open')}</span>` :
+                                    `<span class="badge bg-danger open-badge mt-1 d-block">${Lang.t('st_closed')}</span>`)
                                 : ''}
                         </div>
                     </div>
@@ -685,7 +685,7 @@ function renderPlacesList(places) {
                             <span class="place-rating">
                                 ${getStarRating(place.rating)}
                             </span>
-                            <small class="text-muted">(${place.userRatingsTotal} تقييم)</small>
+                            <small class="text-muted">(${place.userRatingsTotal} ${Lang.t('ratings_count')})</small>
                         </div>
                     ` : ''}
                 </div>
@@ -741,7 +741,7 @@ function createResultsMap(data) {
     });
     hotelMarker = L.marker([data.hotel.lat, data.hotel.lng], { icon: hotelIcon })
         .addTo(resultsMap)
-        .bindPopup('الفندق');
+        .bindPopup(Lang.t('hotel_lbl'));
 
     // Place markers
     const bounds = L.latLngBounds([[data.hotel.lat, data.hotel.lng]]);
@@ -801,9 +801,9 @@ function selectPlace(index) {
 document.getElementById('copyLinkBtn')?.addEventListener('click', function() {
     const link = document.getElementById('openMapsBtn').href;
     navigator.clipboard.writeText(link).then(() => {
-        showToast('نجاح', 'تم نسخ الرابط', 'success');
+        showToast(Lang.t('success_title'), Lang.t('link_copied'), 'success');
     }).catch(() => {
-        showToast('خطأ', 'فشل في نسخ الرابط', 'danger');
+        showToast(Lang.t('err_title'), Lang.t('link_copy_fail'), 'danger');
     });
 });
 

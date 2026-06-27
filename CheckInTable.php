@@ -46,7 +46,7 @@ $arr_of_guest = $search_results;
                placeholder="ابحث عن اسم..." value="<?= htmlspecialchars($search) ?>">
       </div>
       <button type="submit" class="hs-btn hs-btn-primary hs-btn-sm" style="margin-top:10px">
-        <i class="fas fa-search"></i> بحث
+        <i class="fas fa-search"></i> <span data-i18n="search">بحث</span>
       </button>
     </form>
   </div>
